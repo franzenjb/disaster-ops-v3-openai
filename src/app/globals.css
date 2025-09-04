@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --red-cross-red: 237 27 46;
+    --red-cross-gray: 109 110 112;
+    --red-cross-light: 249 249 249;
+  }
+
+  body {
+    background-color: rgb(249 250 251);
+    color: rgb(17 24 39);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    background-color: #ed1b2e;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: background-color 150ms;
+  }
+  
+  .btn-primary:hover {
+    background-color: #b91c1c;
+  }
+
+  .btn-secondary {
+    background-color: white;
+    color: #ed1b2e;
+    border: 1px solid #ed1b2e;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: background-color 150ms;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #fef2f2;
+  }
+
+  .card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    padding: 1.5rem;
+  }
+}

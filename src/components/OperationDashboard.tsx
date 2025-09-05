@@ -13,7 +13,7 @@ import { IAPDashboard } from './IAP/IAPDashboard';
 import { FacilityManager } from './IAP/FacilityManager';
 import { RealFacilityManager } from './FacilityManagement/RealFacilityManager';
 import { IAPDataViewer } from './IAP/IAPDataViewer';
-import { WorkAssignmentCreator } from './WorkAssignment/WorkAssignmentCreator';
+import { SimpleWorkAssignmentCreator } from './WorkAssignment/SimpleWorkAssignmentCreator';
 import { User, Operation } from '../types';
 import { V27_IAP_DATA } from '../data/v27-iap-data';
 
@@ -24,6 +24,7 @@ interface OperationDashboardProps {
 
 export function OperationDashboard({ operation, user }: OperationDashboardProps) {
   const [currentView, setCurrentView] = useState<string>('dashboard');
+  const [showWorkAssignment, setShowWorkAssignment] = useState(false);
 
   // Mock user if not provided
   const mockUser: User = user || {
@@ -67,8 +68,11 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
     return <IAPDataViewer onNavigate={handleNavigate} />;
   }
 
-  if (currentView === 'work-assignment-create') {
-    return <WorkAssignmentCreator onNavigate={handleNavigate} />;
+  if (currentView === 'work-assignment-create' || showWorkAssignment) {
+    return <SimpleWorkAssignmentCreator onClose={() => {
+      setShowWorkAssignment(false);
+      setCurrentView('dashboard');
+    }} />;
   }
 
   // Main dashboard view

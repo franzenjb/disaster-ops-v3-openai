@@ -66,7 +66,11 @@ const SHELTER_ASSETS = [
   { code: 'SHOW', name: 'Portable Showers', unit: 'Each' },
 ];
 
-export function ShelterConsole() {
+interface ShelterConsoleProps {
+  onNavigate?: (view: string) => void;
+}
+
+export function ShelterConsole({ onNavigate }: ShelterConsoleProps = {}) {
   const [assignments, setAssignments] = useState<ShelterAssignment[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -213,6 +217,12 @@ export function ShelterConsole() {
       {/* Header */}
       <div className="bg-red-600 text-white p-4">
         <div className="max-w-7xl mx-auto">
+          <button
+            onClick={() => onNavigate?.('dashboard')}
+            className="text-white hover:text-gray-200 flex items-center mb-2"
+          >
+            ← Back to Dashboard
+          </button>
           <h1 className="text-2xl font-bold">Shelter Operations Console</h1>
           <p className="text-red-100">Discipline: Sheltering | Operational Period: {new Date().toLocaleDateString()}</p>
         </div>

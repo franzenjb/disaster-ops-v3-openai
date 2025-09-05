@@ -4,7 +4,11 @@ import React, { useState } from 'react';
 import { V27_IAP_DATA } from '@/data/v27-iap-data';
 import { simpleStore } from '@/lib/simple-store';
 
-export function RealIAPViewer() {
+interface RealIAPViewerProps {
+  onNavigate?: (view: string) => void;
+}
+
+export function RealIAPViewer({ onNavigate }: RealIAPViewerProps = {}) {
   const [currentPage, setCurrentPage] = useState('cover');
   const facilities = simpleStore.getFacilities();
   
@@ -314,13 +318,21 @@ export function RealIAPViewer() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <div className="bg-red-600 text-white p-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">
-            IAP Viewer - {V27_IAP_DATA.operation.drNumber} Operational Period #{V27_IAP_DATA.operation.operationalPeriod.number}
-          </h1>
-          <button className="bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-100">
-            Export PDF
+        <div className="max-w-7xl mx-auto">
+          <button
+            onClick={() => onNavigate?.('dashboard')}
+            className="text-white hover:text-gray-200 flex items-center mb-2"
+          >
+            ← Back to Dashboard
           </button>
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">
+              IAP Viewer - {V27_IAP_DATA.operation.drNumber} Operational Period #{V27_IAP_DATA.operation.operationalPeriod.number}
+            </h1>
+            <button className="bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-100">
+              Export PDF
+            </button>
+          </div>
         </div>
       </div>
       

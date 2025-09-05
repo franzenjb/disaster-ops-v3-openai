@@ -14,7 +14,7 @@ import { FacilityManager } from './IAP/FacilityManager';
 import { RealFacilityManager } from './FacilityManagement/RealFacilityManager';
 import { RealIAPViewer } from './IAP/RealIAPViewer';
 import { ShelterConsole } from './Disciplines/ShelterConsole';
-import { SimpleWorkAssignmentCreator } from './WorkAssignment/SimpleWorkAssignmentCreator';
+import { UnifiedWorkAssignmentCreator } from './UnifiedWorkAssignment/UnifiedWorkAssignmentCreator';
 import { User, Operation } from '../types';
 import { V27_IAP_DATA } from '../data/v27-iap-data';
 
@@ -66,18 +66,18 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
   }
 
   if (currentView === 'iap-view') {
-    return <RealIAPViewer />;
+    return <RealIAPViewer onNavigate={handleNavigate} />;
   }
 
   if (currentView === 'shelter-console') {
-    return <ShelterConsole />;
+    return <ShelterConsole onNavigate={handleNavigate} />;
   }
 
   if (currentView === 'work-assignment-create' || showWorkAssignment) {
-    return <SimpleWorkAssignmentCreator onClose={() => {
-      setShowWorkAssignment(false);
-      setCurrentView('dashboard');
-    }} />;
+    return <UnifiedWorkAssignmentCreator 
+      onNavigate={handleNavigate} 
+      onClose={() => handleNavigate('dashboard')}
+    />;
   }
 
   // Main dashboard view
@@ -186,6 +186,15 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
             icon="🏠"
             onClick={() => handleNavigate('shelter-console')}
             badge="REAL"
+            working={true}
+          />
+          
+          <NavigationCard
+            title="Create Work Assignment"
+            description="Unified creator for all disciplines with GAP positions and assets"
+            icon="➕"
+            onClick={() => handleNavigate('work-assignment-create')}
+            badge="NEW"
             working={true}
           />
           

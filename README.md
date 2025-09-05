@@ -1,4 +1,4 @@
-# Disaster Operations Platform v3
+# Disaster Operations IAP Management System
 
 [![CI](https://github.com/franzenjb/disaster-ops-v3/actions/workflows/ci.yml/badge.svg)](https://github.com/franzenjb/disaster-ops-v3/actions/workflows/ci.yml)
 

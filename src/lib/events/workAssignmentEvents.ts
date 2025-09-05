@@ -3,7 +3,7 @@
  * Implements event sourcing for work assignment creation and updates
  */
 
-import { EventType, createEvent } from './types';
+import { EventType } from './types';
 import { DatabaseManager, initializeDatabase } from '../database/DatabaseManager';
 
 // Simple UUID v4 generator for browser compatibility
@@ -65,26 +65,39 @@ export async function createWorkAssignment(data: WorkAssignmentData): Promise<st
   const database = await getDb();
   const assignmentId = uuidv4();
   
-  // Create the event
-  const event = createEvent(
-    EventType.WORK_ASSIGNMENT_CREATED,
-    {
+  // Create the event with our custom data structure
+  // We're not using the strict WorkAssignmentCreatedPayload schema
+  // because our work assignments have a different structure
+  const event = {
+    id: assignmentId,
+    type: EventType.WORK_ASSIGNMENT_CREATED,
+    schemaVersion: 1,
+    actorId: 'current-user',
+    deviceId: typeof window !== 'undefined' ? 'browser' : 'server',
+    sessionId: typeof window !== 'undefined' ? 'current-session' : 'server-session',
+    timestamp: Date.now(),
+    payload: {
       assignmentId,
       ...data
     },
-    {
-      actorId: 'current-user' // In real app, get from auth context
-    }
-  );
+    syncStatus: 'local' as const,
+    syncAttempts: 0,
+  };
   
   // Store the event
   await database.appendEvent(event);
   
   // Also create a facility if this is a new one
   const facilityId = uuidv4();
-  const facilityEvent = createEvent(
-    EventType.FACILITY_CREATED,
-    {
+  const facilityEvent = {
+    id: facilityId,
+    type: EventType.FACILITY_CREATED,
+    schemaVersion: 1,
+    actorId: 'current-user',
+    deviceId: typeof window !== 'undefined' ? 'browser' : 'server',
+    sessionId: typeof window !== 'undefined' ? 'current-session' : 'server-session',
+    timestamp: Date.now(),
+    payload: {
       facilityId,
       assignmentId,
       name: data.facility.name,
@@ -100,10 +113,9 @@ export async function createWorkAssignment(data: WorkAssignmentData): Promise<st
       positions: data.positions,
       assets: data.assets
     },
-    {
-      actorId: 'current-user'
-    }
-  );
+    syncStatus: 'local' as const,
+    syncAttempts: 0,
+  };
   
   await database.appendEvent(facilityEvent);
   
@@ -121,19 +133,24 @@ export async function updateFacilityPersonnel(
 ): Promise<void> {
   const database = await getDb();
   
-  const event = createEvent(
-    EventType.FACILITY_PERSONNEL_ASSIGNED,
-    {
+  const event = {
+    id: uuidv4(),
+    type: EventType.FACILITY_PERSONNEL_ASSIGNED,
+    schemaVersion: 1,
+    actorId: 'current-user',
+    deviceId: typeof window !== 'undefined' ? 'browser' : 'server',
+    sessionId: typeof window !== 'undefined' ? 'current-session' : 'server-session',
+    timestamp: Date.now(),
+    payload: {
       facilityId,
       positionCode,
       required,
       have,
       gap: Math.max(0, required - have)
     },
-    {
-      actorId: 'current-user'
-    }
-  );
+    syncStatus: 'local' as const,
+    syncAttempts: 0,
+  };
   
   await database.appendEvent(event);
 }
@@ -149,19 +166,24 @@ export async function updateFacilityAssets(
 ): Promise<void> {
   const database = await getDb();
   
-  const event = createEvent(
-    EventType.FACILITY_RESOURCE_ADDED,
-    {
+  const event = {
+    id: uuidv4(),
+    type: EventType.FACILITY_RESOURCE_ADDED,
+    schemaVersion: 1,
+    actorId: 'current-user',
+    deviceId: typeof window !== 'undefined' ? 'browser' : 'server',
+    sessionId: typeof window !== 'undefined' ? 'current-session' : 'server-session',
+    timestamp: Date.now(),
+    payload: {
       facilityId,
       assetType,
       required,
       have,
       gap: Math.max(0, required - have)
     },
-    {
-      actorId: 'current-user'
-    }
-  );
+    syncStatus: 'local' as const,
+    syncAttempts: 0,
+  };
   
   await database.appendEvent(event);
 }

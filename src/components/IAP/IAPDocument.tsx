@@ -4,6 +4,11 @@ import React, { useState } from 'react';
 import { V27_IAP_DATA } from '@/data/v27-iap-data';
 import { IAPCoverPage } from './IAPCoverPage';
 import { DirectorsMessage } from './DirectorsMessage';
+import { 
+  IAPWorkAssignmentsShelteringResources,
+  IAPWorkAssignmentsSheltering, 
+  IAPWorkAssignmentsFeeding 
+} from './IAPWorkAssignments';
 
 interface IAPSection {
   id: string;
@@ -40,18 +45,25 @@ export function IAPDocument() {
       content: () => <PrioritiesObjectives />
     },
     {
+      id: 'sheltering-resources',
+      title: 'DRO - Sheltering Resources',
+      startPage: 6,
+      endPage: 7,
+      content: () => <IAPWorkAssignmentsShelteringResources />
+    },
+    {
       id: 'sheltering',
       title: 'Work Assignments - Sheltering',
-      startPage: 6,
+      startPage: 8,
       endPage: 14,
-      content: () => <ShelteringAssignments />
+      content: () => <IAPWorkAssignmentsSheltering />
     },
     {
       id: 'feeding',
       title: 'Work Assignments - Feeding',
       startPage: 15,
       endPage: 22,
-      content: () => <FeedingAssignments />
+      content: () => <IAPWorkAssignmentsFeeding />
     },
     {
       id: 'assessment',

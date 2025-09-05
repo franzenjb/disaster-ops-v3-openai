@@ -12,7 +12,7 @@ import React, { useState, useEffect } from 'react';
 import { IAPDashboard } from './IAP/IAPDashboard';
 import { FacilityManager } from './IAP/FacilityManager';
 import { RealFacilityManager } from './FacilityManagement/RealFacilityManager';
-import { RealIAPViewer } from './IAP/RealIAPViewer';
+import { IAPDocument } from './IAP/IAPDocument';
 import { ShelterConsole } from './Disciplines/ShelterConsole';
 import { UnifiedWorkAssignmentCreator } from './UnifiedWorkAssignment/UnifiedWorkAssignmentCreator';
 import { User, Operation } from '../types';
@@ -66,7 +66,17 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
   }
 
   if (currentView === 'iap-view') {
-    return <RealIAPViewer onNavigate={handleNavigate} />;
+    return (
+      <div>
+        <button
+          onClick={() => handleNavigate('dashboard')}
+          className="fixed top-4 left-4 z-50 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center"
+        >
+          ← Back to Dashboard
+        </button>
+        <IAPDocument />
+      </div>
+    );
   }
 
   if (currentView === 'shelter-console') {

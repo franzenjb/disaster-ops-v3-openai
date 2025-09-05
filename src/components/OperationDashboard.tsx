@@ -12,7 +12,7 @@ import React, { useState, useEffect } from 'react';
 import { IAPDashboard } from './IAP/IAPDashboard';
 import { FacilityManager } from './IAP/FacilityManager';
 import { RealFacilityManager } from './FacilityManagement/RealFacilityManager';
-import { IAPDataViewer } from './IAP/IAPDataViewer';
+import { RealIAPViewer } from './IAP/RealIAPViewer';
 import { SimpleWorkAssignmentCreator } from './WorkAssignment/SimpleWorkAssignmentCreator';
 import { User, Operation } from '../types';
 import { V27_IAP_DATA } from '../data/v27-iap-data';
@@ -65,7 +65,7 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
   }
 
   if (currentView === 'iap-view') {
-    return <IAPDataViewer onNavigate={handleNavigate} />;
+    return <RealIAPViewer />;
   }
 
   if (currentView === 'work-assignment-create' || showWorkAssignment) {

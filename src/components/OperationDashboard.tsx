@@ -11,7 +11,7 @@
 import React, { useState, useEffect } from 'react';
 import { IAPDashboard } from './IAP/IAPDashboard';
 import { IAPDocument } from './IAP/IAPDocument';
-import { UnifiedWorkAssignmentManager } from './WorkAssignment/UnifiedWorkAssignmentManager';
+import { ImprovedWorkAssignmentManager } from './WorkAssignment/ImprovedWorkAssignmentManager';
 import { User, Operation } from '../types';
 import { V27_IAP_DATA } from '../data/v27-iap-data';
 
@@ -73,7 +73,7 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
   }
 
   if (currentView === 'work-assignments') {
-    return <UnifiedWorkAssignmentManager onNavigate={handleNavigate} />;
+    return <ImprovedWorkAssignmentManager onNavigate={handleNavigate} />;
   }
 
   // Main dashboard view

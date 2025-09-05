@@ -495,12 +495,13 @@ export interface ServiceMetric {
   verified: boolean;
 }
 
-// User Types
+// User Types with IAP Role-Based Access
 export interface User {
   id: string;
   email: string;
   name: string;
   role: UserRole;
+  iapRole: IAPRole;
   permissions: Permission[];
   homeChapter?: string;
   activeOperations: string[];
@@ -514,6 +515,12 @@ export type UserRole =
   | 'section_chief'
   | 'incident_commander'
   | 'admin';
+
+export type IAPRole = 
+  | 'ip_group'      // I&P Group - full IAP editing access
+  | 'discipline'    // Discipline Teams - facility-specific access
+  | 'field'         // Field Teams - read-only access
+  | 'viewer';       // View-only access
 
 export interface Permission {
   resource: string;
@@ -529,4 +536,451 @@ export interface UserPreferences {
   };
   defaultView: 'dashboard' | 'iap' | 'roster';
   timezone: string;
+}
+
+// IAP Facility Management Types (Core of IAP System)
+export interface IAPFacility {
+  id: string;
+  operationId: string;
+  facilityType: FacilityType;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  county: string;
+  contact: FacilityContact;
+  capacity: FacilityCapacity;
+  personnel: FacilityPersonnel[];
+  resources: FacilityResource[];
+  status: FacilityStatus;
+  workAssignments: WorkAssignment[];
+  serviceLines: ServiceLine[];
+  operationalPeriod: {
+    start: Date;
+    end: Date;
+  };
+  notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  updatedBy: string;
+}
+
+export type FacilityType = 
+  | 'shelter'
+  | 'feeding'
+  | 'distribution'
+  | 'mobile_unit'
+  | 'warehouse'
+  | 'kitchen'
+  | 'command_post'
+  | 'staging_area'
+  | 'reception_center'
+  | 'other';
+
+export interface FacilityContact {
+  primaryName: string;
+  primaryPhone: string;
+  primaryEmail?: string;
+  backupName?: string;
+  backupPhone?: string;
+  backupEmail?: string;
+}
+
+export interface FacilityCapacity {
+  totalCapacity?: number;
+  currentOccupancy?: number;
+  availableSpace?: number;
+  specialNeeds?: number;
+  pets?: number;
+  notes?: string;
+}
+
+export interface FacilityPersonnel {
+  id: string;
+  personId: string;
+  position: string;
+  section: ICSSection;
+  startTime: Date;
+  endTime?: Date;
+  contactInfo: ContactInfo;
+  certifications: string[];
+  isLeader: boolean;
+  reportingTo?: string;
+}
+
+export interface FacilityResource {
+  id: string;
+  resourceType: ResourceType;
+  identifier: string;
+  description: string;
+  quantity: number;
+  status: ResourceStatus;
+  assignedTo?: string;
+  location?: string;
+  notes?: string;
+}
+
+export type ResourceType = 
+  | 'vehicle'
+  | 'equipment'
+  | 'supplies'
+  | 'communications'
+  | 'medical'
+  | 'shelter_supplies'
+  | 'feeding_equipment'
+  | 'other';
+
+export type ResourceStatus = 
+  | 'available'
+  | 'assigned'
+  | 'in_use'
+  | 'maintenance'
+  | 'unavailable';
+
+export type FacilityStatus = 
+  | 'planning'
+  | 'setup'
+  | 'operational'
+  | 'closing'
+  | 'closed'
+  | 'standby';
+
+export interface WorkAssignment {
+  id: string;
+  title: string;
+  description: string;
+  priority: 'high' | 'medium' | 'low';
+  assignedTo: string[];
+  dueDate?: Date;
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  estimatedHours?: number;
+  actualHours?: number;
+  notes?: string;
+}
+
+// Enhanced IAP Document Structure (53-Page System)
+export interface EnhancedIAPDocument extends IAPDocument {
+  facilityData: IAPFacilityData;
+  workSitesTable: WorkSitesTable;
+  dailySchedule: DailySchedule;
+  contactRoster: ContactRoster;
+  organizationChart: EnhancedOrgChart;
+  directorsMessage: RichTextContent;
+  generalMessages: RichTextContent[];
+  incidentPriorities: IncidentPriorities;
+  previousPeriodStatus: PreviousPeriodStatus;
+  actionTracker: ActionTracker;
+  photoAttachments: PhotoAttachment[];
+  ancillaryContent: AncillaryContent[];
+  versionHistory: IAPVersion[];
+  officialSnapshot?: IAPSnapshot;
+}
+
+export interface IAPFacilityData {
+  facilities: IAPFacility[];
+  totalPersonnel: number;
+  totalCapacity: number;
+  currentOccupancy: number;
+  serviceLinesSummary: ServiceLineSummary[];
+  geographicDistribution: GeographicSummary[];
+}
+
+export interface WorkSitesTable {
+  sites: WorkSite[];
+  totalSites: number;
+  sitesByType: { [key in FacilityType]?: number };
+  sitesByCounty: { [county: string]: number };
+}
+
+export interface WorkSite {
+  id: string;
+  county: string;
+  type: FacilityType;
+  facilityName: string;
+  address: string;
+  contact: string;
+  phone: string;
+  status: FacilityStatus;
+  personnel: number;
+  capacity?: number;
+}
+
+export interface DailySchedule {
+  meetings: ScheduledMeeting[];
+  briefings: Briefing[];
+  deadlines: Deadline[];
+  specialEvents: SpecialEvent[];
+}
+
+export interface Briefing {
+  id: string;
+  title: string;
+  dateTime: Date;
+  location: string;
+  presenter: string;
+  attendees: string[];
+  topics: string[];
+  teamsLink?: string;
+}
+
+export interface Deadline {
+  id: string;
+  title: string;
+  dueDateTime: Date;
+  assignedTo: string;
+  priority: 'high' | 'medium' | 'low';
+  status: 'pending' | 'completed' | 'overdue';
+}
+
+export interface SpecialEvent {
+  id: string;
+  title: string;
+  dateTime: Date;
+  location: string;
+  description: string;
+  coordinator: string;
+  participantsNeeded?: number;
+}
+
+export interface ContactRoster {
+  commandStructure: CommandContact[];
+  operationsSection: SectionContact[];
+  planningSection: SectionContact[];
+  logisticsSection: SectionContact[];
+  financeSection: SectionContact[];
+  externalRelations: ExternalContact[];
+  twentyFourHourLines: EmergencyLine[];
+}
+
+export interface CommandContact {
+  position: string;
+  name: string;
+  phone: string;
+  email: string;
+  alternatePhone?: string;
+  section: 'command';
+  isLiveLink: boolean;
+}
+
+export interface SectionContact {
+  position: string;
+  name: string;
+  phone: string;
+  email: string;
+  alternatePhone?: string;
+  section: ICSSection;
+  unit?: string;
+  isLiveLink: boolean;
+}
+
+export interface ExternalContact {
+  organization: string;
+  contact: string;
+  phone: string;
+  email?: string;
+  role: string;
+  availability: string;
+}
+
+export interface EmergencyLine {
+  purpose: string;
+  phone: string;
+  availability: string;
+  backup?: string;
+}
+
+export interface EnhancedOrgChart extends ICSForm203 {
+  liveLinks: boolean;
+  photoUrls: { [position: string]: string };
+  contactMethods: { [position: string]: ContactInfo };
+  reportingStructure: ReportingRelationship[];
+  vacantPositions: string[];
+}
+
+export interface ReportingRelationship {
+  subordinate: string;
+  supervisor: string;
+  directReport: boolean;
+}
+
+export interface IncidentPriorities {
+  lifeSafety: Priority[];
+  incidentStabilization: Priority[];
+  propertyConservation: Priority[];
+  customPriorities: Priority[];
+}
+
+export interface Priority {
+  id: string;
+  description: string;
+  status: 'open' | 'in_progress' | 'completed' | 'cancelled';
+  assignedTo: string;
+  dueDate?: Date;
+  measurableOutcome: string;
+  progress: number; // 0-100
+  notes?: string;
+}
+
+export interface PreviousPeriodStatus {
+  completedObjectives: CompletedObjective[];
+  carryForwardItems: CarryForwardItem[];
+  performanceMetrics: PerformanceMetric[];
+  lessonsLearned: string[];
+}
+
+export interface CompletedObjective {
+  id: string;
+  description: string;
+  completedAt: Date;
+  completedBy: string;
+  outcome: string;
+  resourcesUsed: string[];
+}
+
+export interface CarryForwardItem {
+  id: string;
+  description: string;
+  originalDueDate: Date;
+  newDueDate: Date;
+  reason: string;
+  priority: 'high' | 'medium' | 'low';
+  assignedTo: string;
+}
+
+export interface PerformanceMetric {
+  id: string;
+  metricName: string;
+  target: number;
+  actual: number;
+  unit: string;
+  period: string;
+  variance: number;
+  notes?: string;
+}
+
+export interface ActionTracker {
+  openActions: OpenAction[];
+  completedActions: CompletedAction[];
+  overdueActions: OverdueAction[];
+  upcomingDeadlines: UpcomingDeadline[];
+}
+
+export interface OpenAction {
+  id: string;
+  description: string;
+  assignedTo: string;
+  dueDate: Date;
+  priority: 'high' | 'medium' | 'low';
+  status: 'pending' | 'in_progress';
+  createdAt: Date;
+  createdBy: string;
+}
+
+export interface CompletedAction {
+  id: string;
+  description: string;
+  assignedTo: string;
+  completedAt: Date;
+  completedBy: string;
+  outcome: string;
+  originalDueDate: Date;
+}
+
+export interface OverdueAction {
+  id: string;
+  description: string;
+  assignedTo: string;
+  originalDueDate: Date;
+  daysPastDue: number;
+  escalatedTo?: string;
+  reason?: string;
+}
+
+export interface UpcomingDeadline {
+  id: string;
+  description: string;
+  assignedTo: string;
+  dueDate: Date;
+  hoursUntilDue: number;
+  priority: 'high' | 'medium' | 'low';
+}
+
+export interface PhotoAttachment extends Attachment {
+  caption: string;
+  location?: string;
+  timestamp: Date;
+  photographer: string;
+  isCoverPhoto: boolean;
+  displayOrder: number;
+}
+
+export interface AncillaryContent {
+  id: string;
+  title: string;
+  content: RichTextContent;
+  category: AncillaryCategory;
+  displayOrder: number;
+  isRequired: boolean;
+  createdAt: Date;
+  createdBy: string;
+}
+
+export type AncillaryCategory = 
+  | 'parking_instructions'
+  | 'checkout_procedures'
+  | 'rental_car_info'
+  | 'safety_notices'
+  | 'policy_updates'
+  | 'general_announcements'
+  | 'operational_notes'
+  | 'other';
+
+export interface IAPVersion {
+  id: string;
+  versionNumber: number;
+  createdAt: Date;
+  createdBy: string;
+  changes: VersionChange[];
+  isOfficial: boolean;
+  snapshotId?: string;
+}
+
+export interface VersionChange {
+  section: string;
+  changeType: 'added' | 'modified' | 'removed';
+  description: string;
+  previousValue?: any;
+  newValue?: any;
+}
+
+export interface IAPSnapshot {
+  id: string;
+  iapId: string;
+  versionId: string;
+  snapshotTime: Date;
+  snapshotType: 'official_6pm' | 'manual' | 'scheduled';
+  data: EnhancedIAPDocument;
+  generatedBy: string;
+  isLocked: boolean;
+  distributionList: string[];
+}
+
+export interface ServiceLineSummary {
+  serviceLine: ServiceLine;
+  facilitiesCount: number;
+  totalPersonnel: number;
+  totalCapacity: number;
+  currentOccupancy: number;
+  utilizationRate: number;
+  status: 'operational' | 'setup' | 'closing' | 'standby';
+}
+
+export interface GeographicSummary {
+  county: string;
+  state: string;
+  facilitiesCount: number;
+  totalPersonnel: number;
+  serviceLines: ServiceLine[];
+  primaryContact: string;
 }

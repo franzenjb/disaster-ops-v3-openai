@@ -8,7 +8,8 @@
  * Permanent DB: Complete historical record (PostgreSQL/Supabase)
  */
 
-import { eventBus, EventType } from '../EventBus';
+import { eventBus } from '../sync/EventBus';
+import { EventType } from '../events/types';
 
 export interface DatabaseConfig {
   permanent: {
@@ -105,6 +106,30 @@ export class IndexedDBAdapter implements DatabaseAdapter {
           const iapStore = db.createObjectStore('iap', { keyPath: 'id' });
           iapStore.createIndex('operation_id', 'operation_id', { unique: false });
           iapStore.createIndex('iap_number', 'iap_number', { unique: false });
+          iapStore.createIndex('status', 'status', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains('facilities')) {
+          const facilityStore = db.createObjectStore('facilities', { keyPath: 'id' });
+          facilityStore.createIndex('operation_id', 'operation_id', { unique: false });
+          facilityStore.createIndex('facility_type', 'facility_type', { unique: false });
+          facilityStore.createIndex('status', 'status', { unique: false });
+          facilityStore.createIndex('county', 'county', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains('iap_snapshots')) {
+          const snapshotStore = db.createObjectStore('iap_snapshots', { keyPath: 'id' });
+          snapshotStore.createIndex('iap_id', 'iap_id', { unique: false });
+          snapshotStore.createIndex('snapshot_type', 'snapshot_type', { unique: false });
+          snapshotStore.createIndex('snapshot_time', 'snapshot_time', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains('work_assignments')) {
+          const workStore = db.createObjectStore('work_assignments', { keyPath: 'id' });
+          workStore.createIndex('facility_id', 'facility_id', { unique: false });
+          workStore.createIndex('assigned_to', 'assigned_to', { unique: false });
+          workStore.createIndex('status', 'status', { unique: false });
+          workStore.createIndex('due_date', 'due_date', { unique: false });
         }
         
         if (!db.objectStoreNames.contains('cache')) {
@@ -488,7 +513,16 @@ export class DatabaseManager {
    * Export all data for backup
    */
   async exportData(): Promise<any> {
-    const collections = ['operations', 'roster', 'geography', 'iap', 'events'];
+    const collections = [
+      'operations', 
+      'roster', 
+      'geography', 
+      'iap', 
+      'facilities',
+      'iap_snapshots',
+      'work_assignments',
+      'events'
+    ];
     const exportData: any = {};
     
     for (const collection of collections) {

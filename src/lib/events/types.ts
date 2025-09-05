@@ -71,6 +71,32 @@ export enum EventType {
   IAP_PUBLISHED = 'iap.published',
   IAP_ARCHIVED = 'iap.archived',
   IAP_VERSION_CREATED = 'iap.version_created',
+  IAP_SNAPSHOT_CREATED = 'iap.snapshot_created',
+  IAP_OFFICIAL_SNAPSHOT = 'iap.official_snapshot',
+  
+  // Facility events
+  FACILITY_CREATED = 'facility.created',
+  FACILITY_UPDATED = 'facility.updated',
+  FACILITY_STATUS_CHANGED = 'facility.status_changed',
+  FACILITY_PERSONNEL_ASSIGNED = 'facility.personnel_assigned',
+  FACILITY_PERSONNEL_REMOVED = 'facility.personnel_removed',
+  FACILITY_RESOURCE_ADDED = 'facility.resource_added',
+  FACILITY_RESOURCE_REMOVED = 'facility.resource_removed',
+  
+  // Work assignment events
+  WORK_ASSIGNMENT_CREATED = 'work_assignment.created',
+  WORK_ASSIGNMENT_UPDATED = 'work_assignment.updated',
+  WORK_ASSIGNMENT_COMPLETED = 'work_assignment.completed',
+  WORK_ASSIGNMENT_CANCELLED = 'work_assignment.cancelled',
+  
+  // IAP content events
+  DIRECTORS_MESSAGE_UPDATED = 'iap.directors_message_updated',
+  CONTACT_ROSTER_UPDATED = 'iap.contact_roster_updated',
+  ORG_CHART_UPDATED = 'iap.org_chart_updated',
+  DAILY_SCHEDULE_UPDATED = 'iap.daily_schedule_updated',
+  PRIORITIES_UPDATED = 'iap.priorities_updated',
+  PHOTO_ATTACHED = 'iap.photo_attached',
+  ANCILLARY_CONTENT_UPDATED = 'iap.ancillary_content_updated',
   
   // Service metrics (CRDT-friendly)
   MEALS_SERVED_INCREMENT = 'metrics.meals_served.increment',
@@ -128,12 +154,101 @@ export const MealsServedIncrementPayload = z.object({
   mealType: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
 });
 
+// IAP Event Payloads
+export const IAPCreatedPayload = z.object({
+  iapNumber: z.number(),
+  operationalPeriodStart: z.string(),
+  operationalPeriodEnd: z.string(),
+  preparedBy: z.string(),
+});
+
+export const IAPSnapshotCreatedPayload = z.object({
+  iapId: z.string(),
+  versionId: z.string(),
+  snapshotType: z.enum(['official_6pm', 'manual', 'scheduled']),
+  isLocked: z.boolean().default(false),
+  distributionList: z.array(z.string()).optional(),
+});
+
+export const FacilityCreatedPayload = z.object({
+  facilityType: z.string(),
+  name: z.string(),
+  address: z.string(),
+  city: z.string(),
+  state: z.string(),
+  zip: z.string(),
+  county: z.string(),
+  primaryContact: z.string(),
+  primaryPhone: z.string(),
+  serviceLines: z.array(z.string()),
+});
+
+export const FacilityPersonnelAssignedPayload = z.object({
+  facilityId: z.string(),
+  personId: z.string(),
+  position: z.string(),
+  section: z.string(),
+  startTime: z.string(),
+  isLeader: z.boolean().default(false),
+  reportingTo: z.string().optional(),
+});
+
+export const WorkAssignmentCreatedPayload = z.object({
+  facilityId: z.string(),
+  title: z.string(),
+  description: z.string(),
+  priority: z.enum(['high', 'medium', 'low']),
+  assignedTo: z.array(z.string()),
+  dueDate: z.string().optional(),
+  estimatedHours: z.number().optional(),
+});
+
+export const DirectorsMessageUpdatedPayload = z.object({
+  iapId: z.string(),
+  content: z.object({
+    html: z.string(),
+    plainText: z.string(),
+  }),
+  lastEditedBy: z.string(),
+});
+
+export const ContactRosterUpdatedPayload = z.object({
+  iapId: z.string(),
+  section: z.enum(['command', 'operations', 'planning', 'logistics', 'finance', 'external']),
+  contacts: z.array(z.object({
+    position: z.string(),
+    name: z.string(),
+    phone: z.string(),
+    email: z.string(),
+    alternatePhone: z.string().optional(),
+  })),
+});
+
+export const PhotoAttachedPayload = z.object({
+  iapId: z.string(),
+  filename: z.string(),
+  caption: z.string(),
+  location: z.string().optional(),
+  photographer: z.string(),
+  isCoverPhoto: z.boolean().default(false),
+  displayOrder: z.number().default(0),
+});
+
 // Event validation map
 export const EventPayloadValidators: Record<string, z.ZodSchema> = {
   [EventType.OPERATION_CREATED]: OperationCreatedPayload,
   [EventType.COUNTY_ADDED]: CountyAddedPayload,
   [EventType.PERSON_ASSIGNED]: PersonAssignedPayload,
   [EventType.MEALS_SERVED_INCREMENT]: MealsServedIncrementPayload,
+  // IAP validators
+  [EventType.IAP_CREATED]: IAPCreatedPayload,
+  [EventType.IAP_SNAPSHOT_CREATED]: IAPSnapshotCreatedPayload,
+  [EventType.FACILITY_CREATED]: FacilityCreatedPayload,
+  [EventType.FACILITY_PERSONNEL_ASSIGNED]: FacilityPersonnelAssignedPayload,
+  [EventType.WORK_ASSIGNMENT_CREATED]: WorkAssignmentCreatedPayload,
+  [EventType.DIRECTORS_MESSAGE_UPDATED]: DirectorsMessageUpdatedPayload,
+  [EventType.CONTACT_ROSTER_UPDATED]: ContactRosterUpdatedPayload,
+  [EventType.PHOTO_ATTACHED]: PhotoAttachedPayload,
 };
 
 // Conflict resolution policies
@@ -166,6 +281,24 @@ export const DefaultConflictPolicies: ConflictPolicy[] = [
   
   // IAP updates are last-write-wins with versioning
   { eventType: EventType.IAP_SECTION_UPDATED, resolution: ConflictResolution.LAST_WRITE_WINS },
+  { eventType: EventType.DIRECTORS_MESSAGE_UPDATED, resolution: ConflictResolution.LAST_WRITE_WINS },
+  { eventType: EventType.CONTACT_ROSTER_UPDATED, resolution: ConflictResolution.LAST_WRITE_WINS },
+  { eventType: EventType.ORG_CHART_UPDATED, resolution: ConflictResolution.LAST_WRITE_WINS },
+  
+  // Facility events - domain specific for business rules
+  { eventType: EventType.FACILITY_CREATED, resolution: ConflictResolution.FIRST_WRITE_WINS },
+  { eventType: EventType.FACILITY_UPDATED, resolution: ConflictResolution.LAST_WRITE_WINS },
+  { eventType: EventType.FACILITY_PERSONNEL_ASSIGNED, resolution: ConflictResolution.DOMAIN_SPECIFIC },
+  { eventType: EventType.FACILITY_RESOURCE_ADDED, resolution: ConflictResolution.CRDT_MERGE },
+  
+  // Work assignments - last write wins for status updates
+  { eventType: EventType.WORK_ASSIGNMENT_CREATED, resolution: ConflictResolution.FIRST_WRITE_WINS },
+  { eventType: EventType.WORK_ASSIGNMENT_UPDATED, resolution: ConflictResolution.LAST_WRITE_WINS },
+  { eventType: EventType.WORK_ASSIGNMENT_COMPLETED, resolution: ConflictResolution.FIRST_WRITE_WINS },
+  
+  // Snapshots are immutable once created
+  { eventType: EventType.IAP_SNAPSHOT_CREATED, resolution: ConflictResolution.FIRST_WRITE_WINS },
+  { eventType: EventType.IAP_OFFICIAL_SNAPSHOT, resolution: ConflictResolution.FIRST_WRITE_WINS },
 ];
 
 // Schema version for migration tracking

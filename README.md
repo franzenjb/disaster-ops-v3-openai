@@ -1,146 +1,111 @@
 # Disaster Operations Platform v3
 
-## Event-Sourced Architecture with Dual Database Design
+[![CI](https://github.com/franzenjb/disaster-ops-v3/actions/workflows/ci.yml/badge.svg)](https://github.com/franzenjb/disaster-ops-v3/actions/workflows/ci.yml)
 
-### Quick Start
+A comprehensive disaster response platform that combines real-time field operations with professional IAP (Incident Action Plan) generation — built specifically for Red Cross disaster relief operations.
+
+This platform revolutionizes disaster response by providing both a fast, reliable field operations system and automated generation of professional 53-page IAP documents that match Red Cross standards exactly. No more Excel macros, no more 6PM deadlines, no more data corruption.
+
+## Why We're Building This
+
+### **Core Operations**
+- Keep operations moving in tough conditions (poor connectivity, high tempo)
+- Reduce duplicate data entry and menu‑hopping — one place to set up sites and assign what's needed
+- Preserve a faithful history across all disasters for reporting, learning, and accountability
+
+### **IAP Revolution**
+- **Replace Excel-based IAP creation** with modern, reliable system that generates professional 53-page IAPs
+- **Eliminate the 6PM deadline** — generate IAPs anytime with real-time data
+- **End macro corruption** — bulletproof data integrity with event sourcing
+- **Enable real-time collaboration** — multiple users can work simultaneously without conflicts
+- **Match Red Cross standards exactly** — professional formatting that looks identical to existing IAPs
+
+## How The System Is Organized
+
+- Temporary database (your device): fast, lightweight, built for the current event. Think of it as your clipboard during a tornado, wildfire, or hurricane. It holds the data you need right now so you can keep working offline.
+- Permanent database (cloud): durable, secure, organization‑wide. Think of it as the filing cabinet — the official archive across all operations and years.
+- Logic layer (the “clerk”): the glue between the two. It writes to the clipboard first, files to the cabinet when online, keeps a clear trail of changes, and supports undo/redo when appropriate.
+- Unified input screen (the “desk form”): when you set up a site (shelter, kitchen, etc.), you can immediately set the site type, positions/roles, and tie assets/collateral to that site — without bouncing between menus.
+
+Roster integration: where possible, we will pull from authoritative directories (e.g., Red Cross personnel) to populate rosters rather than forcing manual entry.
+
+## How It Will Be Used
+
+### **Field Operations**
+- Create an operation and its sites in one flow, selecting the type of site and what it needs
+- Assign positions and assets on the same screen you used to create the site
+- Work offline when needed; when you regain connectivity, your device syncs with the official record
+- The same actions (create site, assign staff, allocate resource) are logged as simple "events," so collaboration, undo, and audit are reliable
+
+### **IAP Management**
+- **Role-based access**: I&P Group gets full editing access, Discipline Teams manage their facilities, Field Teams get read-only access
+- **Real-time updates**: IAP data updates throughout the day as operations evolve
+- **6PM Official Snapshots**: Create locked, official versions for distribution while maintaining real-time working copies
+- **Professional Output**: Generate 53-page IAPs that include Cover Page, Director's Message, Organization Chart, Work Sites Table, Work Assignments, Contact Roster, Daily Schedule, and all required ICS forms
+- **Facility-centric approach**: Each facility becomes a row in Work Sites Table and generates corresponding Work Assignments
+
+## Status Snapshot
+
+### **Core Platform**
+- ✅ **Event sourcing foundation**: Complete event-driven architecture with dual database system
+- ✅ **Operation setup**: Basics and Geography steps working with ARC organizational hierarchy
+- ✅ **Local-first design**: IndexedDB storage with offline capability
+- 🔄 **Sync system**: Cloud integration with Supabase planned
+
+### **IAP System** 
+- ✅ **IAP types and events**: Complete type system for 53-page IAP generation
+- ✅ **IAP projector**: Event-sourced IAP document generation from facility and personnel data
+- ✅ **Role-based access**: I&P Group, Discipline Team, and Field Team access controls
+- ✅ **Facility management**: Create and manage operational facilities with personnel and resources
+- ✅ **IAP dashboard**: Professional interface for managing all IAP components
+- ✅ **Snapshot system**: Official 6PM snapshots with version control
+- ✅ **Setup wizard integration**: IAP configuration step in operation setup
+
+## What's Next (Near‑Term)
+
+### **Core Platform**
+- Connect the sync engine: write first to the device, then file to the cloud when online — automatically
+- Complete setup wizard: finish Staffing and Resources steps
+- Integrate roster lookups from authoritative directories to reduce manual typing
+
+### **IAP Enhancements**
+- **PDF Generation**: Professional PDF output matching exact Red Cross formatting
+- **Director's Message Editor**: Rich text editor with templates and photo embedding
+- **Advanced Work Assignments**: Personnel scheduling and resource allocation
+- **Contact Roster Auto-population**: Pull from Setup Tables and personnel assignments
+- **Daily Schedule Management**: Meetings, briefings, and deadlines with Teams integration
+- **Photo Management**: Cover photos and operational documentation
+- **Ancillary Content**: Parking instructions, checkout procedures, policy updates
+
+## Getting Started (for pilots and demos)
+
+Quick start
 ```bash
 npm install
 npm run dev
 # Open http://localhost:3000
 ```
 
-### Architecture Overview
-
-This is Version 3 of the Red Cross Disaster Operations Platform, rebuilt from the ground up with proper event sourcing and a revolutionary dual-database architecture.
-
-#### Core Principles
-1. **Single Source of Truth = Event Log** - All changes are events, append-only
-2. **Entities are Projections** - Operations, rosters, IAPs are built from events
-3. **Offline-First** - Works without internet, syncs when connected
-4. **Built for Conflict** - CRDT merge strategies for collaborative editing
-
-#### Dual Database Strategy
-- **Local (IndexedDB/Dexie)**: Event log + outbox queue + hot projections
-- **Remote (PostgreSQL/Supabase)**: Canonical event log + analytics + compliance
-
-### Project Structure
-```
-/src
-  /lib
-    /events       # Event types with Zod validation
-    /store        # LocalStore with Dexie (IndexedDB)
-    /sync         # EventBus & SyncEngine with outbox/inbox
-    /projections  # Entity projectors from events
-  /components
-    /SetupWizard  # 5-step operation creation
-  /types          # TypeScript definitions
-```
-
-### Key Innovations
-
-#### Complete Event Structure
-```typescript
-Event {
-  id: UUID
-  type: EventType
-  actorId: string
-  timestamp: number
-  payload: any
-  causationId?: UUID  // What caused this
-  correlationId?: UUID // Group related events
-  hash: string        // Integrity check
-  syncStatus: 'local' | 'pending' | 'synced'
-}
-```
-
-#### Outbox/Inbox Pattern
-- Reliable event delivery with retry logic
-- Exponential backoff for failures
-- Idempotency keys prevent duplicates
-- Ordered processing of remote events
-
-#### Conflict Resolution
-- Last-Write-Wins for simple fields
-- CRDT merge for counts (meals served, sheltered)
-- Domain-specific rules for roster assignments
-- Manual resolution UI for complex conflicts
-
-### Development Status
-
-✅ **Completed**
-- Event sourcing foundation
-- Local database with Dexie
-- Outbox/Inbox sync pattern
-- Projection system for entities
-- Setup Wizard structure
-- Basic UI components
-
-🚧 **In Progress**
-- Geography selection (counties/regions)
-- Roster management
-- IAP document system
-
-📋 **Planned**
-- Supabase integration
-- Real-time collaboration
-- Mapbox county selection
-- Full ICS forms (202-215)
-
-### Testing the Platform
-
-1. **Start Development Server**
-   ```bash
-   npm run dev
-   ```
-
-2. **Create an Operation**
-   - Fill in operation basics (name, type, activation level)
-   - Select affected counties (coming soon)
-   - Assign initial staff (coming soon)
-   - Define resource needs (coming soon)
-   - Review and create
-
-3. **Check IndexedDB**
-   - Open DevTools → Application → IndexedDB
-   - See events in `disaster_ops_v3` database
-   - Events table shows append-only log
-   - Outbox shows pending sync items
-
-### Environment Variables
-
-Create `.env.local`:
+Environment
 ```env
-# Mapbox for county selection
-NEXT_PUBLIC_MAPBOX_TOKEN=your_token_here
+# Copy the example and fill values
+# cp .env.local.example .env.local
 
-# Supabase (when ready)
+NEXT_PUBLIC_MAPBOX_TOKEN=your_token_here
 NEXT_PUBLIC_SUPABASE_URL=your_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
 ```
 
-### Key Files
+Quality checks (optional)
+```bash
+npm run type-check && npm run lint && npm run build
+```
 
-- `/src/lib/events/types.ts` - Event definitions and validation
-- `/src/lib/store/LocalStore.ts` - IndexedDB management with Dexie
-- `/src/lib/sync/SyncEngine.ts` - Outbox/inbox synchronization
-- `/src/lib/projections/Projector.ts` - Build entities from events
+## Data Care and Privacy
 
-### Architecture Benefits
-
-1. **Complete Audit Trail** - Every change is recorded
-2. **Time Travel** - Rebuild state at any point
-3. **Offline Resilient** - Works without internet
-4. **Conflict Resolution** - Handles concurrent edits
-5. **Scalable** - Event stream can be partitioned
-
-### Next Steps
-
-1. Complete geography selector with Mapbox
-2. Implement roster management with drag-drop
-3. Build IAP document editor with Quill
-4. Connect Supabase for permanent storage
-5. Add real-time collaboration
+- We keep a clear history of what changed, when, and by whom — to support accountability and recovery.
+- Personally identifiable information (PII) is protected by access controls in the cloud. Policies will align with Red Cross standards as we turn on sync.
 
 ---
 
-Built with Next.js 15, React 19, TypeScript, Dexie, and Zod
+If you’d like a short briefing or a quick walkthrough of the unified site setup flow, reach out — this tool is being shaped for real‑world field use.

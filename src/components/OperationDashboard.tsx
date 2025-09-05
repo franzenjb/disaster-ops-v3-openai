@@ -13,6 +13,7 @@ import { IAPDashboard } from './IAP/IAPDashboard';
 import { FacilityManager } from './IAP/FacilityManager';
 import { RealFacilityManager } from './FacilityManagement/RealFacilityManager';
 import { RealIAPViewer } from './IAP/RealIAPViewer';
+import { ShelterConsole } from './Disciplines/ShelterConsole';
 import { SimpleWorkAssignmentCreator } from './WorkAssignment/SimpleWorkAssignmentCreator';
 import { User, Operation } from '../types';
 import { V27_IAP_DATA } from '../data/v27-iap-data';
@@ -66,6 +67,10 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
 
   if (currentView === 'iap-view') {
     return <RealIAPViewer />;
+  }
+
+  if (currentView === 'shelter-console') {
+    return <ShelterConsole />;
   }
 
   if (currentView === 'work-assignment-create' || showWorkAssignment) {
@@ -176,11 +181,11 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
           />
           
           <NavigationCard
-            title="Create Work Assignment"
-            description="Set up new facilities with personnel and asset requirements"
-            icon="👷"
-            onClick={() => handleNavigate('work-assignment-create')}
-            badge="New!"
+            title="Shelter Operations Console"
+            description="Manage shelter work assignments with GAP positions and assets"
+            icon="🏠"
+            onClick={() => handleNavigate('shelter-console')}
+            badge="REAL"
             working={true}
           />
           

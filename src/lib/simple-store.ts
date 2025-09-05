@@ -124,6 +124,13 @@ class SimpleStore {
     return data.assignments || [];
   }
   
+  // Get work assignment by facility ID
+  getWorkAssignment(facilityId: string): any | null {
+    const data = this.getData();
+    const assignments = data.assignments || [];
+    return assignments.find((a: any) => a.facilityId === facilityId) || null;
+  }
+  
   // Clear all data (for testing)
   clearAll(): void {
     if (typeof window !== 'undefined') {

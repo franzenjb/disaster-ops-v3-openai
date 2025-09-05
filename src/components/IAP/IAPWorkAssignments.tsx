@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { simpleStore } from '@/lib/simple-store';
 
 interface ResourceAssignment {
   resourceId: string;
@@ -14,33 +15,71 @@ interface ResourceAssignment {
   workAssignment: string;
 }
 
-// DRO Sheltering Resources data matching exact IAP format
-const shelteringResources: ResourceAssignment[] = [
-  {
-    resourceId: 'Adventure Island Base Camp',
-    leaderName: 'Sherry Garza-Lopez',
-    leaderContact: '(213-735-4683)',
-    nightLeaderName: 'Sherry Garza-Lopez',
-    nightLeaderContact: '(213-735-4683)',
-    totalPersons: 'SH/SV – 1\nSH/SA – 2',
-    reportingLocation: '10001 McKinley Dr\nTampa, FL 33612\nHillsborough County',
-    reportingTime: 'Day – 07:00\n\nNight – 19:00',
-    workAssignment: 'Operate responder sheltering for assigned responders at location'
-  },
-  {
-    resourceId: 'Red Cross of Southwest Florida Staff Shelter',
-    leaderName: 'Joyce Cook',
-    leaderContact: '(815-579-2893)',
-    nightLeaderName: 'Joyce Cook',
-    nightLeaderContact: '(815-579-2893)',
-    totalPersons: 'SH/SV – 1\nSH/SA – 3',
-    reportingLocation: '2001 Cantu CT\nSarasota, FL 34232\nSarasota County',
-    reportingTime: 'Day – 07:00\n\nNight – 19:00',
-    workAssignment: 'Operate responder sheltering for assigned responders at location'
-  }
-];
+interface FacilityData {
+  id: string;
+  name: string;
+  type: string;
+  county: string;
+  address: string;
+  capacity?: number;
+  currentOccupancy?: number;
+  staffRequired?: number;
+  staffAssigned?: number;
+  mealsPerDay?: number;
+}
 
+// DRO Sheltering Resources - this would come from staff shelter facilities
 export function IAPWorkAssignmentsShelteringResources() {
+  const [resources, setResources] = useState<ResourceAssignment[]>([]);
+  
+  useEffect(() => {
+    // Load staff shelter facilities from database
+    const facilities = simpleStore.getFacilities();
+    const staffShelters = facilities
+      .filter(f => f.type === 'Staff Shelter' || f.type === 'Responder Shelter')
+      .map(f => ({
+        resourceId: f.name,
+        leaderName: 'TBD', // This would come from personnel assignments
+        leaderContact: 'TBD',
+        nightLeaderName: 'TBD',
+        nightLeaderContact: 'TBD',
+        totalPersons: 'TBD',
+        reportingLocation: `${f.address}\n${f.county || ''} County`,
+        reportingTime: 'Day – 07:00\n\nNight – 19:00',
+        workAssignment: 'Operate responder sheltering for assigned responders at location'
+      }));
+    
+    // If no staff shelters, show example data
+    if (staffShelters.length === 0) {
+      setResources([
+        {
+          resourceId: 'Adventure Island Base Camp',
+          leaderName: 'Sherry Garza-Lopez',
+          leaderContact: '(213-735-4683)',
+          nightLeaderName: 'Sherry Garza-Lopez',
+          nightLeaderContact: '(213-735-4683)',
+          totalPersons: 'SH/SV – 1\nSH/SA – 2',
+          reportingLocation: '10001 McKinley Dr\nTampa, FL 33612\nHillsborough County',
+          reportingTime: 'Day – 07:00\n\nNight – 19:00',
+          workAssignment: 'Operate responder sheltering for assigned responders at location'
+        },
+        {
+          resourceId: 'Red Cross of Southwest Florida Staff Shelter',
+          leaderName: 'Joyce Cook',
+          leaderContact: '(815-579-2893)',
+          nightLeaderName: 'Joyce Cook',
+          nightLeaderContact: '(815-579-2893)',
+          totalPersons: 'SH/SV – 1\nSH/SA – 3',
+          reportingLocation: '2001 Cantu CT\nSarasota, FL 34232\nSarasota County',
+          reportingTime: 'Day – 07:00\n\nNight – 19:00',
+          workAssignment: 'Operate responder sheltering for assigned responders at location'
+        }
+      ]);
+    } else {
+      setResources(staffShelters);
+    }
+  }, []);
+
   return (
     <div className="p-4">
       {/* Title matching exact IAP format */}
@@ -63,7 +102,7 @@ export function IAPWorkAssignmentsShelteringResources() {
           </tr>
         </thead>
         <tbody>
-          {shelteringResources.map((resource, idx) => (
+          {resources.map((resource, idx) => (
             <React.Fragment key={idx}>
               <tr>
                 <td className="border-2 border-black p-2 align-top font-bold" rowSpan={2}>
@@ -104,7 +143,58 @@ export function IAPWorkAssignmentsShelteringResources() {
 }
 
 export function IAPWorkAssignmentsSheltering() {
-  // Exact format from the real IAP document
+  const [facilities, setFacilities] = useState<FacilityData[]>([]);
+  
+  useEffect(() => {
+    // Load shelter facilities from database
+    const allFacilities = simpleStore.getFacilities();
+    const shelters = allFacilities
+      .filter(f => f.type === 'Shelter' || f.type === 'Evacuation Center')
+      .map(f => {
+        // Parse any stored work assignment data
+        const workAssignment = simpleStore.getWorkAssignment(f.id);
+        return {
+          id: f.id,
+          name: f.name,
+          type: f.type,
+          county: f.county || 'Unknown',
+          address: f.address,
+          capacity: workAssignment?.capacity || 100,
+          currentOccupancy: workAssignment?.currentOccupancy || 0,
+          staffRequired: workAssignment?.staffRequired || 5,
+          staffAssigned: workAssignment?.staffAssigned || 0,
+        };
+      });
+    
+    setFacilities(shelters);
+  }, []);
+
+  // If no facilities from database, show example data
+  const displayFacilities = facilities.length > 0 ? facilities : [
+    {
+      id: '1',
+      name: 'Central High School Shelter',
+      type: 'Shelter',
+      county: 'Hillsborough',
+      address: '',
+      capacity: 250,
+      currentOccupancy: 187,
+      staffRequired: 12,
+      staffAssigned: 10
+    },
+    {
+      id: '2', 
+      name: 'First Baptist Church',
+      type: 'Shelter',
+      county: 'Pinellas',
+      address: '',
+      capacity: 150,
+      currentOccupancy: 92,
+      staffRequired: 8,
+      staffAssigned: 8
+    }
+  ];
+
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Work Assignments - Sheltering</h2>
@@ -122,24 +212,22 @@ export function IAPWorkAssignmentsSheltering() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="border border-black p-2">Central High School Shelter</td>
-            <td className="border border-black p-2 text-center">Hillsborough</td>
-            <td className="border border-black p-2 text-center">250</td>
-            <td className="border border-black p-2 text-center">187</td>
-            <td className="border border-black p-2 text-center">12</td>
-            <td className="border border-black p-2 text-center">10</td>
-            <td className="border border-black p-2 text-center font-bold text-red-600">2</td>
-          </tr>
-          <tr className="bg-gray-50">
-            <td className="border border-black p-2">First Baptist Church</td>
-            <td className="border border-black p-2 text-center">Pinellas</td>
-            <td className="border border-black p-2 text-center">150</td>
-            <td className="border border-black p-2 text-center">92</td>
-            <td className="border border-black p-2 text-center">8</td>
-            <td className="border border-black p-2 text-center">8</td>
-            <td className="border border-black p-2 text-center font-bold">0</td>
-          </tr>
+          {displayFacilities.map((facility, idx) => {
+            const gap = (facility.staffRequired || 0) - (facility.staffAssigned || 0);
+            return (
+              <tr key={facility.id} className={idx % 2 === 0 ? '' : 'bg-gray-50'}>
+                <td className="border border-black p-2">{facility.name}</td>
+                <td className="border border-black p-2 text-center">{facility.county}</td>
+                <td className="border border-black p-2 text-center">{facility.capacity || 0}</td>
+                <td className="border border-black p-2 text-center">{facility.currentOccupancy || 0}</td>
+                <td className="border border-black p-2 text-center">{facility.staffRequired || 0}</td>
+                <td className="border border-black p-2 text-center">{facility.staffAssigned || 0}</td>
+                <td className={`border border-black p-2 text-center font-bold ${gap > 0 ? 'text-red-600' : ''}`}>
+                  {gap}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -147,7 +235,54 @@ export function IAPWorkAssignmentsSheltering() {
 }
 
 export function IAPWorkAssignmentsFeeding() {
-  // Exact format from the real IAP document
+  const [facilities, setFacilities] = useState<FacilityData[]>([]);
+  
+  useEffect(() => {
+    // Load feeding facilities from database
+    const allFacilities = simpleStore.getFacilities();
+    const feedingSites = allFacilities
+      .filter(f => f.type === 'Feeding' || f.type === 'Kitchen' || f.type === 'ERV')
+      .map(f => {
+        const workAssignment = simpleStore.getWorkAssignment(f.id);
+        return {
+          id: f.id,
+          name: f.name,
+          type: f.type,
+          county: f.county || 'Unknown',
+          address: f.address,
+          mealsPerDay: workAssignment?.mealsPerDay || 500,
+          staffRequired: workAssignment?.staffRequired || 4,
+          staffAssigned: workAssignment?.staffAssigned || 0,
+        };
+      });
+    
+    setFacilities(feedingSites);
+  }, []);
+
+  // If no facilities from database, show example data
+  const displayFacilities = facilities.length > 0 ? facilities : [
+    {
+      id: '1',
+      name: 'ERV Unit 247',
+      type: 'Mobile',
+      county: 'Hillsborough',
+      address: '',
+      mealsPerDay: 500,
+      staffRequired: 4,
+      staffAssigned: 3
+    },
+    {
+      id: '2',
+      name: 'Community Center Kitchen',
+      type: 'Fixed',
+      county: 'Pinellas',
+      address: '',
+      mealsPerDay: 750,
+      staffRequired: 6,
+      staffAssigned: 6
+    }
+  ];
+
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Work Assignments - Feeding</h2>
@@ -165,24 +300,22 @@ export function IAPWorkAssignmentsFeeding() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="border border-black p-2">ERV Unit 247</td>
-            <td className="border border-black p-2 text-center">Mobile</td>
-            <td className="border border-black p-2 text-center">Hillsborough</td>
-            <td className="border border-black p-2 text-center">500</td>
-            <td className="border border-black p-2 text-center">4</td>
-            <td className="border border-black p-2 text-center">3</td>
-            <td className="border border-black p-2 text-center font-bold text-red-600">1</td>
-          </tr>
-          <tr className="bg-gray-50">
-            <td className="border border-black p-2">Community Center Kitchen</td>
-            <td className="border border-black p-2 text-center">Fixed</td>
-            <td className="border border-black p-2 text-center">Pinellas</td>
-            <td className="border border-black p-2 text-center">750</td>
-            <td className="border border-black p-2 text-center">6</td>
-            <td className="border border-black p-2 text-center">6</td>
-            <td className="border border-black p-2 text-center font-bold">0</td>
-          </tr>
+          {displayFacilities.map((facility, idx) => {
+            const gap = (facility.staffRequired || 0) - (facility.staffAssigned || 0);
+            return (
+              <tr key={facility.id} className={idx % 2 === 0 ? '' : 'bg-gray-50'}>
+                <td className="border border-black p-2">{facility.name}</td>
+                <td className="border border-black p-2 text-center">{facility.type}</td>
+                <td className="border border-black p-2 text-center">{facility.county}</td>
+                <td className="border border-black p-2 text-center">{facility.mealsPerDay || 0}</td>
+                <td className="border border-black p-2 text-center">{facility.staffRequired || 0}</td>
+                <td className="border border-black p-2 text-center">{facility.staffAssigned || 0}</td>
+                <td className={`border border-black p-2 text-center font-bold ${gap > 0 ? 'text-red-600' : ''}`}>
+                  {gap}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       

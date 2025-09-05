@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { V27_IAP_DATA } from '@/data/v27-iap-data';
+import { IAPCoverPage } from './IAPCoverPage';
+import { DirectorsMessage } from './DirectorsMessage';
 
 interface IAPSection {
   id: string;
@@ -28,7 +30,7 @@ export function IAPDocument() {
       title: "Director's Intent/Message",
       startPage: 2,
       endPage: 3,
-      content: () => <DirectorsMessage />
+      content: () => <DirectorsMessageSection />
     },
     {
       id: 'priorities',
@@ -175,96 +177,43 @@ export function IAPDocument() {
   );
 }
 
-// Cover Page Component
+// Cover Page Component - Now uses the enhanced component with photo upload
 function CoverPage() {
-  const [checklist] = useState({
-    directorsIntent: true,
-    incidentPriorities: true,
-    statusOfPrevious: true,
-    contactRoster: true,
-    incidentOpenAction: true,
-    incidentOrgChart: true,
-    workAssignment: true,
-    workSites: true,
-    dailySchedule: true,
-    generalMessage: true
-  });
-
   return (
-    <div className="p-6">
-      <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold mb-2">Incident Action Plan [#{V27_IAP_DATA.operation.operationalPeriod.number}]</h1>
-        <h2 className="text-2xl">DR {V27_IAP_DATA.operation.drNumber} - {V27_IAP_DATA.operation.name}</h2>
-        <p className="text-lg mt-2">{V27_IAP_DATA.operation.operationalPeriod.start} to {V27_IAP_DATA.operation.operationalPeriod.end}</p>
-      </div>
-
-      {/* Photo Placeholder */}
-      <div className="border-2 border-gray-300 h-64 mb-6 flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="text-gray-500 mb-2">Operation Photo</div>
-          <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-            Upload Photo
-          </button>
-        </div>
-      </div>
-
-      {/* Document Checklist */}
-      <div className="grid grid-cols-2 gap-4 text-sm">
-        <div>
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-200">
-                <td className="p-2 font-bold">Documents Included:</td>
-                <td className="p-2 font-bold text-center">Y/N</td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="p-1">Director's Intent/Message</td>
-                <td className="p-1 text-center">{checklist.directorsIntent ? 'Y' : 'N'}</td>
-              </tr>
-              <tr>
-                <td className="p-1">Incident Priorities and Objectives</td>
-                <td className="p-1 text-center">{checklist.incidentPriorities ? 'Y' : 'N'}</td>
-              </tr>
-              <tr>
-                <td className="p-1">Contact Roster DRO HQ</td>
-                <td className="p-1 text-center">{checklist.contactRoster ? 'Y' : 'N'}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div>
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-200">
-                <td className="p-2 font-bold">Documents Included:</td>
-                <td className="p-2 font-bold text-center">Y/N</td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="p-1">Work Assignment</td>
-                <td className="p-1 text-center">{checklist.workAssignment ? 'Y' : 'N'}</td>
-              </tr>
-              <tr>
-                <td className="p-1">Work Sites</td>
-                <td className="p-1 text-center">{checklist.workSites ? 'Y' : 'N'}</td>
-              </tr>
-              <tr>
-                <td className="p-1">Daily Schedule</td>
-                <td className="p-1 text-center">{checklist.dailySchedule ? 'Y' : 'N'}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <IAPCoverPage 
+      drNumber={V27_IAP_DATA.operation.drNumber}
+      operationName={V27_IAP_DATA.operation.name}
+      operationalPeriod={V27_IAP_DATA.operation.operationalPeriod}
+      preparedBy={{
+        name: V27_IAP_DATA.operation.preparedBy,
+        title: V27_IAP_DATA.operation.preparedByTitle
+      }}
+      approvedBy={{
+        name: V27_IAP_DATA.operation.approvedBy,
+        title: V27_IAP_DATA.operation.approvedByTitle
+      }}
+      onPhotoUpdate={(photo, caption) => {
+        console.log('Photo updated:', photo, caption);
+        // Here you would save to your data store
+      }}
+    />
   );
 }
 
-// Directors Message Component
-function DirectorsMessage() {
+// Directors Message Component - Now uses rich text editor
+function DirectorsMessageSection() {
+  return (
+    <DirectorsMessage 
+      onContentChange={(content) => {
+        console.log('Director message updated:', content);
+        // Here you would save to your data store
+      }}
+    />
+  );
+}
+
+// Legacy DirectorsMessage for other references
+function LegacyDirectorsMessage() {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Director's Message</h2>

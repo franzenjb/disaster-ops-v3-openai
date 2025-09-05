@@ -196,28 +196,44 @@ export class IndexedDBAdapter implements IndexedDBDatabaseAdapter {
   }
   
   async execute(storeName: string, operation: 'add' | 'put' | 'delete', data?: any): Promise<void> {
-    if (!this.db) throw new Error('Database not connected');
+    if (!this.db) {
+      console.error('[TemporaryDatabase] Database not connected in execute method');
+      throw new Error('Database not connected');
+    }
     
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction([storeName], 'readwrite');
-      const store = transaction.objectStore(storeName);
-      
-      let request: IDBRequest;
-      
-      switch (operation) {
-        case 'add':
-          request = store.add(data);
-          break;
-        case 'put':
-          request = store.put(data);
-          break;
-        case 'delete':
-          request = store.delete(data);
-          break;
+      try {
+        console.log(`[TemporaryDatabase] Creating transaction for ${storeName} with operation ${operation}`);
+        const transaction = this.db!.transaction([storeName], 'readwrite');
+        const store = transaction.objectStore(storeName);
+        
+        let request: IDBRequest;
+        
+        switch (operation) {
+          case 'add':
+            console.log(`[TemporaryDatabase] Adding data to ${storeName}:`, data);
+            request = store.add(data);
+            break;
+          case 'put':
+            request = store.put(data);
+            break;
+          case 'delete':
+            request = store.delete(data);
+            break;
+        }
+        
+        request.onsuccess = () => {
+          console.log(`[TemporaryDatabase] ${operation} operation successful on ${storeName}`);
+          resolve();
+        };
+        request.onerror = () => {
+          console.error(`[TemporaryDatabase] ${operation} operation failed on ${storeName}:`, request.error);
+          reject(request.error);
+        };
+      } catch (error) {
+        console.error(`[TemporaryDatabase] Error in execute method:`, error);
+        reject(error);
       }
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
     });
   }
   
@@ -402,19 +418,32 @@ export class DatabaseManager {
    * Append an event to the event store
    */
   async appendEvent(event: any): Promise<void> {
-    // Store event in IndexedDB
-    await this.temporaryDb.execute('events', 'add', event);
-    
-    // Queue for sync
-    this.queueForSync({
-      collection: 'events',
-      operation: 'add',
-      data: event,
-      timestamp: Date.now()
-    });
-    
-    // Emit to event bus for real-time updates
-    eventBus.emit(event.type, event.payload, { correlationId: event.id });
+    try {
+      console.log('[DatabaseManager] appendEvent called with:', event);
+      
+      // Always ensure database is connected
+      console.log('[DatabaseManager] Ensuring database connection...');
+      await this.temporaryDb.connect();
+      
+      // Store event in IndexedDB
+      console.log('[DatabaseManager] Executing add operation on events store');
+      await this.temporaryDb.execute('events', 'add', event);
+      console.log('[DatabaseManager] Event stored successfully');
+      
+      // Queue for sync
+      this.queueForSync({
+        collection: 'events',
+        operation: 'add',
+        data: event,
+        timestamp: Date.now()
+      });
+      
+      // Emit to event bus for real-time updates
+      eventBus.emit(event.type, event.payload, { correlationId: event.id });
+    } catch (error) {
+      console.error('[DatabaseManager] Error in appendEvent:', error);
+      throw error;
+    }
   }
   
   /**

@@ -65,6 +65,7 @@ export async function createWorkAssignment(data: WorkAssignmentData): Promise<st
   try {
     console.log('Creating work assignment with data:', data);
     const database = await getDb();
+    console.log('Database obtained:', database);
     const assignmentId = uuidv4();
     console.log('Generated assignment ID:', assignmentId);
   
@@ -88,7 +89,9 @@ export async function createWorkAssignment(data: WorkAssignmentData): Promise<st
   };
   
   // Store the event
+  console.log('Attempting to append event:', event);
   await database.appendEvent(event);
+  console.log('Event appended successfully');
   
   // Also create a facility if this is a new one
   const facilityId = uuidv4();

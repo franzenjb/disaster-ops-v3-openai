@@ -1,14 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill'), { 
-  ssr: false,
-  loading: () => <p>Loading editor...</p>
-});
+import React, { useState } from 'react';
+import { SimpleRichTextEditor } from './SimpleRichTextEditor';
 
 interface DirectorsMessageProps {
   initialContent?: string;
@@ -16,44 +9,7 @@ interface DirectorsMessageProps {
 }
 
 export function DirectorsMessage({ initialContent = '', onContentChange }: DirectorsMessageProps) {
-  const [content, setContent] = useState(initialContent || `
-    <h2>Director's Intent</h2>
-    <p>Our primary focus for this operational period is to:</p>
-    <ul>
-      <li>Ensure the safety and well-being of all affected residents</li>
-      <li>Maintain efficient shelter operations across all sites</li>
-      <li>Coordinate with local authorities for resource distribution</li>
-      <li>Prepare for potential escalation of operations</li>
-    </ul>
-    <p><strong>Remember:</strong> We are here to serve with compassion and efficiency. Every action we take impacts those who need us most.</p>
-  `);
-
-  const modules = useMemo(() => ({
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      ['blockquote', 'code-block'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'align': [] }],
-      ['link', 'image'],
-      ['clean']
-    ],
-    clipboard: {
-      matchVisual: false
-    }
-  }), []);
-
-  const formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike',
-    'blockquote', 'code-block',
-    'list', 'bullet', 'indent',
-    'color', 'background',
-    'align',
-    'link', 'image'
-  ];
+  const [content, setContent] = useState(initialContent);
 
   const handleChange = (value: string) => {
     setContent(value);
@@ -67,16 +23,10 @@ export function DirectorsMessage({ initialContent = '', onContentChange }: Direc
       <h2 className="text-2xl font-bold mb-4">Director's Message</h2>
       
       <div className="mb-4">
-        <div className="bg-white border rounded-lg">
-          <ReactQuill
-            theme="snow"
-            value={content}
-            onChange={handleChange}
-            modules={modules}
-            formats={formats}
-            style={{ minHeight: '400px' }}
-          />
-        </div>
+        <SimpleRichTextEditor
+          initialContent={content}
+          onChange={handleChange}
+        />
       </div>
 
       <div className="mt-6 p-4 bg-gray-50 rounded">
@@ -86,7 +36,6 @@ export function DirectorsMessage({ initialContent = '', onContentChange }: Direc
           <li>• Highlight key priorities for the operational period</li>
           <li>• Include recognition for exceptional work when appropriate</li>
           <li>• Address any major changes or concerns</li>
-          <li>• You can add images by clicking the image icon in the toolbar</li>
           <li>• Use formatting to emphasize important points</li>
         </ul>
       </div>

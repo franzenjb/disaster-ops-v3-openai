@@ -233,10 +233,15 @@ export function IAPCoverPage({
                 type="text"
                 placeholder="Add caption..."
                 value={caption}
-                onChange={(e) => {
-                  setCaption(e.target.value);
+                onChange={(e) => setCaption(e.target.value)}
+                onBlur={() => {
                   if (onPhotoUpdate) {
-                    onPhotoUpdate(croppedImageUrl, e.target.value);
+                    onPhotoUpdate(croppedImageUrl, caption);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && onPhotoUpdate) {
+                    onPhotoUpdate(croppedImageUrl, caption);
                   }
                 }}
                 className="w-full p-2 border rounded mb-2"

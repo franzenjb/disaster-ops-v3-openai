@@ -147,6 +147,18 @@ class SimpleStore {
   importData(importedData: any): void {
     this.saveData(importedData);
   }
+  
+  // Contact roster methods
+  saveContactRoster(roster: any[]): void {
+    const data = this.getData();
+    data.contactRoster = roster;
+    this.saveData(data);
+  }
+  
+  getContactRoster(): any[] {
+    const data = this.getData();
+    return data.contactRoster || [];
+  }
 }
 
 // Export singleton instance

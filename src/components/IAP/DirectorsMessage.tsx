@@ -29,17 +29,6 @@ export function DirectorsMessage({ initialContent = '', onContentChange }: Direc
         />
       </div>
 
-      <div className="mt-6 p-4 bg-gray-50 rounded">
-        <h3 className="font-semibold mb-2">Tips for Director's Message:</h3>
-        <ul className="text-sm text-gray-600 space-y-1">
-          <li>• Keep the message concise and action-oriented</li>
-          <li>• Highlight key priorities for the operational period</li>
-          <li>• Include recognition for exceptional work when appropriate</li>
-          <li>• Address any major changes or concerns</li>
-          <li>• Use formatting to emphasize important points</li>
-        </ul>
-      </div>
-
       <div className="mt-4 flex justify-end space-x-2">
         <button
           onClick={() => {

@@ -135,10 +135,11 @@ export function IAPCoverPage({
   };
 
   return (
-    <div className="bg-white p-8 max-w-[8.5in] mx-auto" style={{ minHeight: '11in' }}>
+    <div className="bg-white p-8" style={{ minHeight: '11in' }}>
       {/* Header Table */}
       <table className="w-full border-2 border-black mb-4">
-        <tr>
+        <tbody>
+          <tr>
           <td className="border-2 border-black p-2">
             <div className="text-sm">Incident Name:</div>
             <div className="font-bold">{operationName}</div>
@@ -151,7 +152,8 @@ export function IAPCoverPage({
             <div className="text-sm">Operational Period</div>
             <div className="font-bold">{operationalPeriod.start} to {operationalPeriod.end}</div>
           </td>
-        </tr>
+          </tr>
+        </tbody>
       </table>
 
       {/* Title */}
@@ -260,7 +262,8 @@ export function IAPCoverPage({
       {/* Document Checklist */}
       <div className="mb-6">
         <table className="w-full">
-          <tr>
+          <tbody>
+            <tr>
             <td className="w-1/2 pr-4">
               <table className="w-full">
                 <thead>
@@ -325,13 +328,15 @@ export function IAPCoverPage({
                 </tbody>
               </table>
             </td>
-          </tr>
+            </tr>
+          </tbody>
         </table>
       </div>
 
       {/* Prepared/Approved By */}
       <table className="w-full border-2 border-black">
-        <tr className="bg-gray-200">
+        <tbody>
+          <tr className="bg-gray-200">
           <td className="border-r-2 border-black p-2 w-1/2">
             <div className="font-bold">Prepared By:</div>
             <div>{preparedBy.name}</div>
@@ -342,7 +347,8 @@ export function IAPCoverPage({
             <div>{approvedBy.name}</div>
             <div className="text-sm">{approvedBy.title}</div>
           </td>
-        </tr>
+          </tr>
+        </tbody>
       </table>
     </div>
   );

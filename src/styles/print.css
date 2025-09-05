@@ -1,0 +1,170 @@
+/* Print styles for IAP PDF export */
+@media print {
+  /* Hide navigation and action buttons */
+  .no-print,
+  button:not(.print-content),
+  .bg-yellow-50,
+  .flex.space-x-2,
+  .text-sm.text-gray-600 {
+    display: none !important;
+  }
+  
+  /* Show all accordion content when printing */
+  .iap-document.print-mode .border-t.border-gray-200,
+  .print-mode [class*="border-t"] {
+    display: block !important;
+  }
+  
+  /* Remove accordion arrows and interactive elements */
+  .print-mode button[onclick*="toggleSection"] {
+    display: none !important;
+  }
+  
+  /* Reset page margins */
+  @page {
+    margin: 0.5in;
+    size: letter;
+  }
+  
+  /* Ensure content fits on page */
+  body {
+    font-size: 10pt;
+    line-height: 1.4;
+  }
+  
+  /* Page breaks */
+  .page-break-before {
+    page-break-before: always;
+  }
+  
+  .page-break-after {
+    page-break-after: always;
+  }
+  
+  .avoid-break {
+    page-break-inside: avoid;
+  }
+  
+  /* Show all sections expanded */
+  .border-t.border-gray-200 {
+    display: block !important;
+  }
+  
+  /* Table formatting */
+  table {
+    font-size: 9pt;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #000 !important;
+    padding: 4px !important;
+  }
+  
+  /* Headers */
+  h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 10pt;
+  }
+  
+  h2 {
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 8pt;
+    page-break-after: avoid;
+  }
+  
+  h3 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin-bottom: 6pt;
+    page-break-after: avoid;
+  }
+  
+  /* Ensure background colors print */
+  .bg-red-600 {
+    background-color: #dc2626 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .bg-gray-600 {
+    background-color: #4b5563 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .bg-gray-200 {
+    background-color: #e5e7eb !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .bg-gray-100 {
+    background-color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Remove shadows and rounded corners */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  .rounded-lg,
+  .rounded-t-lg,
+  .rounded-b-lg,
+  .rounded {
+    border-radius: 0 !important;
+  }
+  
+  /* Links */
+  a {
+    text-decoration: underline;
+    color: #000 !important;
+  }
+  
+  /* Images */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+  
+  /* Org chart adjustments */
+  .react-flow__renderer {
+    height: auto !important;
+    min-height: 600px !important;
+  }
+  
+  /* Contact roster formatting */
+  .contact-roster-item {
+    page-break-inside: avoid;
+  }
+  
+  /* Work assignments */
+  .work-assignment {
+    page-break-inside: avoid;
+  }
+  
+  /* Footer on each page */
+  .print-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 8pt;
+    padding: 10px;
+    border-top: 1px solid #000;
+  }
+  
+  /* Page numbers */
+  .page-number:after {
+    content: counter(page);
+  }
+}

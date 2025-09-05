@@ -234,6 +234,157 @@ export function IAPWorkAssignmentsSheltering() {
   );
 }
 
+// Enhanced Feeding Work Assignments with ERV details
+export function IAPWorkAssignmentsFeedingERV() {
+  interface ERVAssignment {
+    resourceId: string;
+    crew: { name: string; note?: string }[];
+    personnel: string;
+    reportingLocation: string;
+    reportingTime: string;
+    workAssignment: string;
+  }
+
+  const ervAssignments: ERVAssignment[] = [
+    {
+      resourceId: 'ERV 11181',
+      crew: [
+        { name: 'Jake Gonzales' },
+        { name: 'Ben Knight' }
+      ],
+      personnel: 'FF/SA-ERV – 2',
+      reportingLocation: 'BRG - Church of the Palms\n3224 Bee Ridge Rd.\nSarasota Fl',
+      reportingTime: '09:00',
+      workAssignment: '***VEHICLE IS OUT OF SERVICE with a broken part.*** Crew, report to the kitchen at 9AM to pick up meals and deliver on a route to be assigned by your kitchen manager. The kitchen manager at BRG today is Dianne Heard (610-416-5238).'
+    },
+    {
+      resourceId: 'ERV 31082',
+      crew: [
+        { name: 'Greg Camacho' },
+        { name: '**Please sign the sign-in sheet' }
+      ],
+      personnel: 'FF/SA-ERV – 2',
+      reportingLocation: 'BRG - Church of the Palms\n3224 Bee Ridge Rd.\nSarasota Fl',
+      reportingTime: '09:00',
+      workAssignment: 'Report to the kitchen at 9AM to pick up meals and deliver to clients on a route to be assigned by your kitchen manager. The kitchen manager at BRG today is Dianne Heard (610-416-5238).'
+    },
+    {
+      resourceId: 'ERV 34076',
+      crew: [
+        { name: 'Blackshear, Kenneth' },
+        { name: 'Horning, James' },
+        { name: 'Ohno, Rosa' }
+      ],
+      personnel: 'FF/SA-ERV – 2',
+      reportingLocation: 'Stand by for Assignment',
+      reportingTime: '10:30',
+      workAssignment: 'Stand by for assignment details from District 4 Feeding Coordinator'
+    },
+    {
+      resourceId: 'ERV 16619',
+      crew: [
+        { name: 'Fredericksen, Rick' },
+        { name: 'Fredericksen, Jackie' }
+      ],
+      personnel: 'FF/SA-ERV – 2',
+      reportingLocation: 'Stand by for Assignment',
+      reportingTime: '11:00',
+      workAssignment: 'Stand by for assignment details from District 4 Feeding Coordinator'
+    },
+    {
+      resourceId: 'ERV 34084',
+      crew: [
+        { name: 'Traversa, Janice' },
+        { name: 'Crowell, John' }
+      ],
+      personnel: 'FF/SA-ERV – 2',
+      reportingLocation: 'Stand by for Assignment',
+      reportingTime: '10:30',
+      workAssignment: 'Stand by for assignment details from District 4 Feeding Coordinator'
+    }
+  ];
+
+  return (
+    <div className="p-4 space-y-6">
+      {/* Header */}
+      <div className="bg-gray-600 text-white p-2">
+        <h2 className="text-lg font-bold">DRO – Feeding</h2>
+      </div>
+      
+      {/* Leadership */}
+      <div className="bg-gray-50 p-3 border border-gray-300">
+        <h3 className="font-bold mb-2">Operations Leadership</h3>
+        <p>AD Operations – Jennifer Carkner (509-859-2374)</p>
+        <p>HQ Mass Care Chief – Brenda Bridges (760-987-5452)</p>
+        <p>HQ Feeding Manager – Jamie Bonner (518-569-5038)</p>
+      </div>
+
+      {/* Resources Table */}
+      <div className="border border-black">
+        <div className="bg-gray-200 p-2 border-b border-black">
+          <h3 className="font-bold">DRO – Feeding Resources</h3>
+        </div>
+        
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-black">
+              <th className="border-r border-black p-2 text-left bg-gray-100 w-1/5">Resource ID</th>
+              <th className="border-r border-black p-2 text-left bg-gray-100 w-1/4">Leader Name & Contact Information</th>
+              <th className="border-r border-black p-2 text-left bg-gray-100 w-1/6">Total # of Persons</th>
+              <th className="border-r border-black p-2 text-left bg-gray-100 w-1/4">Reporting Location</th>
+              <th className="p-2 text-left bg-gray-100">Reporting Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ervAssignments.map((erv, idx) => (
+              <React.Fragment key={idx}>
+                <tr className="border-b border-black">
+                  <td className="border-r border-black p-2 align-top" rowSpan={2}>
+                    <div className="font-semibold">{erv.resourceId}</div>
+                  </td>
+                  <td className="border-r border-black p-2">
+                    {erv.crew.map((member, midx) => (
+                      <div key={midx} className="text-sm">
+                        • {member.name}
+                      </div>
+                    ))}
+                  </td>
+                  <td className="border-r border-black p-2 text-center">
+                    {erv.personnel}
+                  </td>
+                  <td className="border-r border-black p-2">
+                    <div className="text-xs whitespace-pre-wrap">{erv.reportingLocation}</div>
+                  </td>
+                  <td className="p-2 text-center">
+                    {erv.reportingTime}
+                  </td>
+                </tr>
+                <tr className="border-b border-black bg-gray-50">
+                  <td colSpan={4} className="p-2">
+                    <div className="font-semibold">Work Assignment</div>
+                    <div className="text-sm">{erv.workAssignment}</div>
+                  </td>
+                </tr>
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-8 border-t-2 border-black pt-4 flex justify-between">
+        <div>
+          <span className="font-bold">Prepared By:</span> Gary Pelletier<br />
+          Information & Planning
+        </div>
+        <div className="text-right">
+          Page 22 of 53
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function IAPWorkAssignmentsFeeding() {
   const [facilities, setFacilities] = useState<FacilityData[]>([]);
   

@@ -7,8 +7,16 @@ import { DirectorsMessage } from './DirectorsMessage';
 import { 
   IAPWorkAssignmentsShelteringResources,
   IAPWorkAssignmentsSheltering, 
-  IAPWorkAssignmentsFeeding 
+  IAPWorkAssignmentsFeeding,
+  IAPWorkAssignmentsFeedingERV
 } from './IAPWorkAssignments';
+import { IAPWorkAssignmentsGovernment } from './IAPWorkAssignmentsGovernment';
+import { IAPWorkAssignmentsDamageAssessment } from './IAPWorkAssignmentsDamageAssessment';
+import { IAPWorkAssignmentsDistribution } from './IAPWorkAssignmentsDistribution';
+import { IAPWorkAssignmentsIndividualCare } from './IAPWorkAssignmentsIndividualCare';
+import { ContactRoster } from './ContactRoster';
+import { OrgChartFlow } from './OrgChartFlow';
+import { PrioritiesObjectives } from './PrioritiesObjectives';
 
 interface IAPSection {
   id: string;
@@ -20,6 +28,35 @@ interface IAPSection {
 
 export function IAPDocument() {
   const [expandedSection, setExpandedSection] = useState<string>('cover');
+  
+  // Export to PDF functionality
+  const handleExportPDF = () => {
+    // Expand all sections for printing
+    const printContainer = document.getElementById('iap-print-container');
+    if (printContainer) {
+      printContainer.classList.add('print-mode');
+      // Add all content to print view
+      setTimeout(() => {
+        window.print();
+        printContainer.classList.remove('print-mode');
+      }, 100);
+    }
+  };
+  
+  const handlePrint = () => {
+    handleExportPDF(); // Same functionality
+  };
+  
+  const handleEmail = () => {
+    const subject = encodeURIComponent(`IAP #${V27_IAP_DATA.operation.operationalPeriod.number} - DR ${V27_IAP_DATA.operation.drNumber}`);
+    const body = encodeURIComponent(`Please find attached the Incident Action Plan for ${V27_IAP_DATA.operation.name}.\n\nOperational Period: ${V27_IAP_DATA.operation.operationalPeriod.start} to ${V27_IAP_DATA.operation.operationalPeriod.end}\n\nPrepared by: ${V27_IAP_DATA.operation.preparedBy}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
+  
+  const handleReturnToDashboard = () => {
+    // Navigate back to main dashboard
+    window.location.href = '/disaster-ops-v3';
+  };
   
   // Define all 53 pages according to actual IAP structure
   const sections: IAPSection[] = [
@@ -38,53 +75,67 @@ export function IAPDocument() {
       content: () => <DirectorsMessageSection />
     },
     {
+      id: 'contact-roster',
+      title: 'Contact Roster DRO HQ',
+      startPage: 4,
+      endPage: 6,
+      content: () => <ContactRoster />
+    },
+    {
+      id: 'org-chart',
+      title: 'Incident Organization Chart',
+      startPage: 7,
+      endPage: 8,
+      content: () => <OrgChartFlow />
+    },
+    {
       id: 'priorities',
       title: 'Incident Priorities and Objectives',
-      startPage: 4,
-      endPage: 5,
+      startPage: 9,
+      endPage: 10,
       content: () => <PrioritiesObjectives />
     },
     {
       id: 'sheltering-resources',
       title: 'DRO - Sheltering Resources',
-      startPage: 6,
-      endPage: 7,
+      startPage: 11,
+      endPage: 12,
       content: () => <IAPWorkAssignmentsShelteringResources />
-    },
-    {
-      id: 'sheltering',
-      title: 'Work Assignments - Sheltering',
-      startPage: 8,
-      endPage: 14,
-      content: () => <IAPWorkAssignmentsSheltering />
     },
     {
       id: 'feeding',
       title: 'Work Assignments - Feeding',
-      startPage: 15,
-      endPage: 22,
-      content: () => <IAPWorkAssignmentsFeeding />
+      startPage: 13,
+      endPage: 15,
+      content: () => <IAPWorkAssignmentsFeedingERV />
     },
     {
-      id: 'assessment',
-      title: 'Work Assignments - Assessment',
+      id: 'government-ops',
+      title: 'Work Assignments - Government Operations',
       startPage: 23,
+      endPage: 25,
+      content: () => <IAPWorkAssignmentsGovernment />
+    },
+    {
+      id: 'damage-assessment',
+      title: 'Work Assignments - Damage Assessment',
+      startPage: 26,
       endPage: 28,
-      content: () => <AssessmentAssignments />
+      content: () => <IAPWorkAssignmentsDamageAssessment />
     },
     {
-      id: 'client-services',
-      title: 'Work Assignments - Client Services',
+      id: 'distribution',
+      title: 'Work Assignments - Distribution',
       startPage: 29,
-      endPage: 33,
-      content: () => <ClientServicesAssignments />
+      endPage: 31,
+      content: () => <IAPWorkAssignmentsDistribution />
     },
     {
-      id: 'contact-roster',
-      title: 'Contact Roster',
-      startPage: 34,
+      id: 'individual-care',
+      title: 'Work Assignments - Individual Disaster Care',
+      startPage: 32,
       endPage: 38,
-      content: () => <ContactRoster />
+      content: () => <IAPWorkAssignmentsIndividualCare />
     },
     {
       id: 'work-sites',
@@ -121,23 +172,52 @@ export function IAPDocument() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-4">
+    <>
+      <style jsx global>{`
+        @media print {
+          .no-print { display: none !important; }
+          .print-only { display: block !important; }
+          .page-break { page-break-after: always; }
+          @page { size: letter; margin: 0.75in; }
+          body { font-size: 10pt; }
+          h2 { font-size: 14pt; page-break-after: avoid; }
+          table { page-break-inside: avoid; }
+          .section-content { display: block !important; }
+        }
+        @media screen {
+          .print-only { display: none !important; }
+        }
+      `}</style>
+      <div className="min-h-screen bg-gray-50">
+        <div id="iap-print-container" className="max-w-7xl mx-auto p-4 iap-document">
         {/* Document Header */}
         <div className="bg-red-600 text-white p-4 rounded-t-lg">
-          <h1 className="text-2xl font-bold">Incident Action Plan #{V27_IAP_DATA.operation.operationalPeriod.number}</h1>
-          <p>DR {V27_IAP_DATA.operation.drNumber} - {V27_IAP_DATA.operation.name}</p>
-          <p className="text-sm">Operational Period: {V27_IAP_DATA.operation.operationalPeriod.start} to {V27_IAP_DATA.operation.operationalPeriod.end}</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-2xl font-bold">Incident Action Plan #{V27_IAP_DATA.operation.operationalPeriod.number}</h1>
+              <p>DR {V27_IAP_DATA.operation.drNumber} - {V27_IAP_DATA.operation.name}</p>
+              <p className="text-sm">Operational Period: {V27_IAP_DATA.operation.operationalPeriod.start} to {V27_IAP_DATA.operation.operationalPeriod.end}</p>
+            </div>
+            <button 
+              onClick={handleReturnToDashboard}
+              className="bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-100 font-semibold flex items-center gap-2 no-print"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Return to Dashboard
+            </button>
+          </div>
         </div>
 
         {/* Accordion Sections */}
-        <div className="bg-white border-2 border-gray-200">
+        <div className="bg-white border-2 border-gray-200 screen-only">
           {sections.map((section) => (
             <div key={section.id} className="border-b border-gray-200 last:border-b-0">
               {/* Section Header */}
               <button
                 onClick={() => toggleSection(section.id)}
-                className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors no-print"
               >
                 <div className="flex items-center space-x-4">
                   <span className={`transform transition-transform ${expandedSection === section.id ? 'rotate-90' : ''}`}>
@@ -166,17 +246,58 @@ export function IAPDocument() {
             </div>
           ))}
         </div>
+        
+        {/* Print-only content - all sections expanded */}
+        <div className="print-only">
+          {sections.map((section, index) => {
+            // Calculate actual page number based on previous sections
+            let startPage = 1;
+            for (let i = 0; i < index; i++) {
+              startPage += (sections[i].endPage - sections[i].startPage + 1);
+            }
+            
+            return (
+              <div key={section.id} className="section-print page-break">
+                <h2 className="text-xl font-bold mb-4">{section.title}</h2>
+                <div className="section-content">
+                  {section.content()}
+                </div>
+                <div className="text-center text-sm mt-8">
+                  Page {startPage} of {sections.reduce((total, s) => total + (s.endPage - s.startPage + 1), 0)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
         {/* Actions Bar */}
         <div className="bg-gray-100 p-4 rounded-b-lg flex justify-between items-center">
           <div className="flex space-x-2">
-            <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+            <button 
+              onClick={handleExportPDF}
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
               Export to PDF
             </button>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            <button 
+              onClick={handlePrint}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              </svg>
               Print
             </button>
-            <button className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
+            <button 
+              onClick={handleEmail}
+              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
               Email
             </button>
           </div>
@@ -185,7 +306,8 @@ export function IAPDocument() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 
@@ -257,34 +379,7 @@ function LegacyDirectorsMessage() {
   );
 }
 
-// Priorities and Objectives Component
-function PrioritiesObjectives() {
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Incident Priorities and Objectives</h2>
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Incident Priorities</h3>
-          <ol className="list-decimal ml-6 space-y-2">
-            <li>Life Safety - Ensure safety of all responders and affected populations</li>
-            <li>Incident Stabilization - Provide shelter, feeding, and essential services</li>
-            <li>Property/Environmental Conservation - Support recovery efforts</li>
-          </ol>
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Operational Period Objectives</h3>
-          <ol className="list-decimal ml-6 space-y-2">
-            <li>Maintain 24/7 shelter operations at all active sites</li>
-            <li>Provide 3 meals per day to all shelter residents</li>
-            <li>Complete damage assessments in priority zones</li>
-            <li>Process client assistance requests within 48 hours</li>
-            <li>Coordinate with state/federal partners on resource requests</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  );
-}
+// PrioritiesObjectives component is now imported from ./PrioritiesObjectives.tsx
 
 // Sheltering Assignments Component
 function ShelteringAssignments() {
@@ -379,37 +474,7 @@ function ClientServicesAssignments() {
   );
 }
 
-function ContactRoster() {
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Contact Roster</h2>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="p-2 text-left">Position</th>
-            <th className="p-2 text-left">Name</th>
-            <th className="p-2 text-left">Phone</th>
-            <th className="p-2 text-left">Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="p-2">Job Director</td>
-            <td className="p-2">{V27_IAP_DATA.operation.approvedBy}</td>
-            <td className="p-2">(555) 123-4567</td>
-            <td className="p-2">director@redcross.org</td>
-          </tr>
-          <tr>
-            <td className="p-2">I&P Manager</td>
-            <td className="p-2">{V27_IAP_DATA.operation.preparedBy}</td>
-            <td className="p-2">(555) 123-4568</td>
-            <td className="p-2">planning@redcross.org</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-}
+// ContactRoster component is now imported from ./ContactRoster.tsx
 
 function WorkSitesFacilities() {
   return (

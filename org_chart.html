@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Cross Organization Chart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-bottom: 3px solid #dc2626;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .footer {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-top: 2px solid #333;
+        }
+    </style>
+    <script>
+        // Make phone numbers and emails clickable
+        window.onload = function() {
+            const svg = document.querySelector('svg');
+            if (svg) {
+                // Find all text elements with phone numbers
+                const texts = svg.querySelectorAll('text');
+                texts.forEach(text => {
+                    const content = text.textContent;
+                    // Phone number pattern
+                    if (content && content.includes('📞')) {
+                        const phone = content.match(/[0-9-]+/);
+                        if (phone) {
+                            text.style.cursor = 'pointer';
+                            text.style.fill = '#2563eb';
+                            text.onclick = () => window.location.href = 'tel:' + phone[0].replace(/-/g, '');
+                        }
+                    }
+                    // Email pattern
+                    if (content && content.includes('✉️')) {
+                        text.style.cursor = 'pointer';
+                        text.style.fill = '#2563eb';
+                        text.onclick = () => {
+                            const email = content.replace('✉️', '').trim() + '@redcross.org';
+                            window.location.href = 'mailto:' + email;
+                        };
+                    }
+                });
+            }
+        };
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>Incident Organization Chart</h1>
+        <p><strong>Incident Name:</strong> FLOCOM | <strong>DR Number:</strong> 220-25</p>
+        <p><strong>Operational Period:</strong> 18:00 20/10/2024 to 17:59 21/10/2024</p>
+    </div>
+    
+    <div class="chart-container">
+        <object data="org_chart.svg" type="image/svg+xml" width="100%">
+            <img src="org_chart.svg" alt="Organization Chart" />
+        </object>
+    </div>
+    
+    <div class="footer">
+        <p><strong>Prepared By:</strong> Gary Pelletier<br/>Information & Planning</p>
+        <p>Page 8 of 53</p>
+    </div>
+</body>
+</html>

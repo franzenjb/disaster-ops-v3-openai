@@ -10,11 +10,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { IAPDashboard } from './IAP/IAPDashboard';
-import { FacilityManager } from './IAP/FacilityManager';
-import { RealFacilityManager } from './FacilityManagement/RealFacilityManager';
 import { IAPDocument } from './IAP/IAPDocument';
-import { ShelterConsole } from './Disciplines/ShelterConsole';
-import { UnifiedWorkAssignmentCreator } from './UnifiedWorkAssignment/UnifiedWorkAssignmentCreator';
+import { UnifiedWorkAssignmentManager } from './WorkAssignment/UnifiedWorkAssignmentManager';
 import { User, Operation } from '../types';
 import { V27_IAP_DATA } from '../data/v27-iap-data';
 
@@ -61,10 +58,6 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
     );
   }
 
-  if (currentView === 'facility-management') {
-    return <RealFacilityManager onNavigate={handleNavigate} />;
-  }
-
   if (currentView === 'iap-view') {
     return (
       <div>
@@ -79,15 +72,8 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
     );
   }
 
-  if (currentView === 'shelter-console') {
-    return <ShelterConsole onNavigate={handleNavigate} />;
-  }
-
-  if (currentView === 'work-assignment-create' || showWorkAssignment) {
-    return <UnifiedWorkAssignmentCreator 
-      onNavigate={handleNavigate} 
-      onClose={() => handleNavigate('dashboard')}
-    />;
+  if (currentView === 'work-assignments') {
+    return <UnifiedWorkAssignmentManager onNavigate={handleNavigate} />;
   }
 
   // Main dashboard view
@@ -173,47 +159,21 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
         {/* Main Navigation Cards - Only Working Features */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NavigationCard
-            title="Facility Management"
-            description="Manage facilities with Req/Have/Gap tracking for Personnel and Assets"
-            icon="🏢"
-            onClick={() => handleNavigate('facility-management')}
-            badge="Working"
-            working={true}
-          />
-          
-          <NavigationCard
-            title="Generate IAP Document"
-            description="Create official 53-page IAP document matching Red Cross format"
+            title="Work Assignment Management"
+            description="Complete facility and work assignment management for all disciplines"
             icon="📋"
-            onClick={() => handleNavigate('iap-view')}
-            badge="NEW"
+            onClick={() => handleNavigate('work-assignments')}
+            badge="ALL-IN-ONE"
             working={true}
           />
           
           <NavigationCard
-            title="Shelter Operations Console"
-            description="Manage shelter work assignments with GAP positions and assets"
-            icon="🏠"
-            onClick={() => handleNavigate('shelter-console')}
-            badge="REAL"
-            working={true}
-          />
-          
-          <NavigationCard
-            title="Create Work Assignment"
-            description="Unified creator for all disciplines with GAP positions and assets"
-            icon="➕"
-            onClick={() => handleNavigate('work-assignment-create')}
-            badge="NEW"
-            working={true}
-          />
-          
-          <NavigationCard
-            title="Generate IAP"
-            description="Generate 53-page IAP document (Coming Soon)"
+            title="View IAP Document"
+            description="View and export the 53-page IAP document in Red Cross format"
             icon="📄"
-            onClick={() => {}}
-            working={false}
+            onClick={() => handleNavigate('iap-view')}
+            badge="LIVE"
+            working={true}
           />
         </div>
         
@@ -224,12 +184,13 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
             This is a working prototype using real data from IAP V27. Currently, you can:
           </p>
           <ul className="mt-2 text-sm text-yellow-700 list-disc list-inside">
-            <li>View real operational data from FLOCOM DR 220-25</li>
-            <li>Explore Facility Management with actual shelters and feeding sites</li>
-            <li>See Req/Have/Gap calculations for personnel and assets</li>
+            <li>Create and manage work assignments for all disciplines in one place</li>
+            <li>Track Req/Have/Gap for both personnel (GAP positions) and assets</li>
+            <li>View the complete 53-page IAP document in accordion format</li>
+            <li>Edit existing facilities or create new ones across all service lines</li>
           </ul>
           <p className="mt-2 text-sm text-yellow-700">
-            Next: Making edits save to the database and generating the actual IAP document.
+            Next: PDF export and 6PM freeze/publish workflow
           </p>
         </div>
 

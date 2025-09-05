@@ -582,9 +582,14 @@ export function WorkAssignmentCreator({ onNavigate, onSave }: WorkAssignmentCrea
                       onSave?.(assignment);
                       alert('Work Assignment Created Successfully! The facility and requirements have been saved to the database.');
                       onNavigate?.('dashboard');
-                    } catch (error) {
+                    } catch (error: any) {
                       console.error('Error creating work assignment:', error);
-                      alert('Error creating work assignment. Please try again.');
+                      console.error('Error details:', {
+                        message: error?.message,
+                        stack: error?.stack,
+                        name: error?.name
+                      });
+                      alert(`Error creating work assignment: ${error?.message || 'Unknown error'}. Check console for details.`);
                     }
                   }}
                   className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"

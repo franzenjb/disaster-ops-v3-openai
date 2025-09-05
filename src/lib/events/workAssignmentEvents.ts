@@ -62,8 +62,11 @@ export interface WorkAssignmentData {
  * Create a new work assignment
  */
 export async function createWorkAssignment(data: WorkAssignmentData): Promise<string> {
-  const database = await getDb();
-  const assignmentId = uuidv4();
+  try {
+    console.log('Creating work assignment with data:', data);
+    const database = await getDb();
+    const assignmentId = uuidv4();
+    console.log('Generated assignment ID:', assignmentId);
   
   // Create the event with our custom data structure
   // We're not using the strict WorkAssignmentCreatedPayload schema
@@ -119,7 +122,12 @@ export async function createWorkAssignment(data: WorkAssignmentData): Promise<st
   
   await database.appendEvent(facilityEvent);
   
+  console.log('Work assignment created successfully');
   return assignmentId;
+  } catch (error) {
+    console.error('Error in createWorkAssignment:', error);
+    throw error;
+  }
 }
 
 /**

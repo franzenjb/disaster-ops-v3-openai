@@ -405,7 +405,7 @@ function AssessmentAssignments() {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Work Assignments - Assessment</h2>
       <p>Assessment teams and assignments will be displayed here.</p>
-    </IAPPageTemplate>
+    </div>
   );
 }
 
@@ -414,7 +414,7 @@ function ClientServicesAssignments() {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Work Assignments - Client Services</h2>
       <p>Client services assignments and case management details will be displayed here.</p>
-    </IAPPageTemplate>
+    </div>
   );
 }
 

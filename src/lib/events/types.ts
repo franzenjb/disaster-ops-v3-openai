@@ -304,6 +304,19 @@ export const DefaultConflictPolicies: ConflictPolicy[] = [
 // Schema version for migration tracking
 export const CURRENT_SCHEMA_VERSION = 1;
 
+// UUID v4 generator for browser compatibility
+function generateUUID() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback for environments without crypto.randomUUID
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 // Event creation helper
 export function createEvent(
   type: EventType,
@@ -316,7 +329,7 @@ export function createEvent(
   }
 ): Event {
   const event: Event = {
-    id: crypto.randomUUID(),
+    id: generateUUID(),
     type,
     schemaVersion: CURRENT_SCHEMA_VERSION,
     actorId: metadata.actorId,
@@ -326,7 +339,7 @@ export function createEvent(
     timestamp: Date.now(),
     payload,
     causationId: metadata.causationId,
-    correlationId: metadata.correlationId || crypto.randomUUID(),
+    correlationId: metadata.correlationId || generateUUID(),
     syncStatus: 'local',
     syncAttempts: 0,
   };
@@ -364,7 +377,7 @@ function getDeviceId(): string {
   if (typeof window === 'undefined') return 'server';
   let deviceId = localStorage.getItem('disaster_ops_device_id');
   if (!deviceId) {
-    deviceId = crypto.randomUUID();
+    deviceId = generateUUID();
     localStorage.setItem('disaster_ops_device_id', deviceId);
   }
   return deviceId;
@@ -374,7 +387,7 @@ function getSessionId(): string {
   if (typeof window === 'undefined') return 'server-session';
   let sessionId = sessionStorage.getItem('disaster_ops_session_id');
   if (!sessionId) {
-    sessionId = crypto.randomUUID();
+    sessionId = generateUUID();
     sessionStorage.setItem('disaster_ops_session_id', sessionId);
   }
   return sessionId;

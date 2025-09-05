@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "deploy": "npm run build && touch out/.nojekyll && cp -r out _site",
+    "deploy:gh": "npm run build && touch out/.nojekyll && gh-pages -d out -t true"
   },
   "keywords": [],
   "author": "",

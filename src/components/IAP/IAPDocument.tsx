@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { IAPPageTemplate } from './IAPPageTemplate';
 import { V27_IAP_DATA } from '@/data/v27-iap-data';
 
 interface IAPSection {
@@ -192,7 +191,7 @@ function CoverPage() {
   });
 
   return (
-    <IAPPageTemplate pageNumber={1} hideHeader={true}>
+    <div className="p-6">
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold mb-2">Incident Action Plan [#{V27_IAP_DATA.operation.operationalPeriod.number}]</h1>
         <h2 className="text-2xl">DR {V27_IAP_DATA.operation.drNumber} - {V27_IAP_DATA.operation.name}</h2>
@@ -260,14 +259,14 @@ function CoverPage() {
           </table>
         </div>
       </div>
-    </IAPPageTemplate>
+    </div>
   );
 }
 
 // Directors Message Component
 function DirectorsMessage() {
   return (
-    <IAPPageTemplate pageNumber={2}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Director's Message</h2>
       <div className="border rounded p-4 min-h-[600px]">
         <div contentEditable className="outline-none" suppressContentEditableWarning>
@@ -293,14 +292,14 @@ function DirectorsMessage() {
           </p>
         </div>
       </div>
-    </IAPPageTemplate>
+    </div>
   );
 }
 
 // Priorities and Objectives Component
 function PrioritiesObjectives() {
   return (
-    <IAPPageTemplate pageNumber={4}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Incident Priorities and Objectives</h2>
       <div className="space-y-6">
         <div>
@@ -322,14 +321,14 @@ function PrioritiesObjectives() {
           </ol>
         </div>
       </div>
-    </IAPPageTemplate>
+    </div>
   );
 }
 
 // Sheltering Assignments Component
 function ShelteringAssignments() {
   return (
-    <IAPPageTemplate pageNumber={6}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Work Assignments - Sheltering</h2>
       <table className="w-full border-collapse text-sm">
         <thead>
@@ -359,14 +358,14 @@ function ShelteringAssignments() {
           ))}
         </tbody>
       </table>
-    </IAPPageTemplate>
+    </div>
   );
 }
 
 // Feeding Assignments Component
 function FeedingAssignments() {
   return (
-    <IAPPageTemplate pageNumber={15}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Work Assignments - Feeding</h2>
       <table className="w-full border-collapse text-sm">
         <thead>
@@ -396,14 +395,14 @@ function FeedingAssignments() {
           ))}
         </tbody>
       </table>
-    </IAPPageTemplate>
+    </div>
   );
 }
 
 // Placeholder components for other sections
 function AssessmentAssignments() {
   return (
-    <IAPPageTemplate pageNumber={23}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Work Assignments - Assessment</h2>
       <p>Assessment teams and assignments will be displayed here.</p>
     </IAPPageTemplate>
@@ -412,7 +411,7 @@ function AssessmentAssignments() {
 
 function ClientServicesAssignments() {
   return (
-    <IAPPageTemplate pageNumber={29}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Work Assignments - Client Services</h2>
       <p>Client services assignments and case management details will be displayed here.</p>
     </IAPPageTemplate>
@@ -421,7 +420,7 @@ function ClientServicesAssignments() {
 
 function ContactRoster() {
   return (
-    <IAPPageTemplate pageNumber={34}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Contact Roster</h2>
       <table className="w-full text-sm">
         <thead>
@@ -447,13 +446,13 @@ function ContactRoster() {
           </tr>
         </tbody>
       </table>
-    </IAPPageTemplate>
+    </div>
   );
 }
 
 function WorkSitesFacilities() {
   return (
-    <IAPPageTemplate pageNumber={39}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Work Sites and Facilities</h2>
       <table className="w-full text-sm">
         <thead>
@@ -475,13 +474,13 @@ function WorkSitesFacilities() {
           ))}
         </tbody>
       </table>
-    </IAPPageTemplate>
+    </div>
   );
 }
 
 function DailySchedule() {
   return (
-    <IAPPageTemplate pageNumber={45}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Daily Schedule</h2>
       <table className="w-full">
         <thead>
@@ -501,24 +500,24 @@ function DailySchedule() {
           <tr><td className="p-2">1800</td><td className="p-2">Shift Change</td><td className="p-2">All Sites</td></tr>
         </tbody>
       </table>
-    </IAPPageTemplate>
+    </div>
   );
 }
 
 function MapsGeographic() {
   return (
-    <IAPPageTemplate pageNumber={49}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Maps and Geographic Information</h2>
       <div className="border-2 border-gray-300 h-96 flex items-center justify-center bg-gray-50">
         <p className="text-gray-500">Operational area maps and facility locations</p>
       </div>
-    </IAPPageTemplate>
+    </div>
   );
 }
 
 function AppendicesReferences() {
   return (
-    <IAPPageTemplate pageNumber={52}>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Appendices and References</h2>
       <div className="space-y-4">
         <div>
@@ -538,6 +537,6 @@ function AppendicesReferences() {
           </ul>
         </div>
       </div>
-    </IAPPageTemplate>
+    </div>
   );
 }

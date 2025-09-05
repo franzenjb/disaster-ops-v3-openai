@@ -48,10 +48,19 @@ export interface DatabaseAdapter {
   isConnected(): boolean;
 }
 
+export interface IndexedDBDatabaseAdapter {
+  connect(): Promise<void>;
+  disconnect(): Promise<void>;
+  query<T>(storeName: string, params?: any): Promise<QueryResult<T>>;
+  execute(storeName: string, operation: 'add' | 'put' | 'delete', data?: any): Promise<void>;
+  transaction(operations: Array<{ store: string; operation: 'add' | 'put' | 'delete'; data?: any }>): Promise<void>;
+  isConnected(): boolean;
+}
+
 /**
  * IndexedDB adapter for temporary/offline storage
  */
-export class IndexedDBAdapter implements DatabaseAdapter {
+export class IndexedDBAdapter implements IndexedDBDatabaseAdapter {
   private db: IDBDatabase | null = null;
   private dbName: string;
   private version: number;
@@ -386,6 +395,37 @@ export class DatabaseManager {
         timestamp: Date.now()
       });
     });
+  }
+  
+  /**
+   * Append an event to the event store
+   */
+  async appendEvent(event: any): Promise<void> {
+    // Store event in IndexedDB
+    await this.temporaryDb.execute('events', 'add', event);
+    
+    // Queue for sync
+    this.queueForSync({
+      collection: 'events',
+      operation: 'add',
+      data: event,
+      timestamp: Date.now()
+    });
+    
+    // Emit to event bus for real-time updates
+    eventBus.emit(event.type, event.payload, { correlationId: event.id });
+  }
+  
+  /**
+   * Get events by type
+   */
+  async getEventsByType(eventType: string): Promise<any[]> {
+    const result = await this.temporaryDb.query<any[]>('events', {
+      index: 'type',
+      value: eventType
+    });
+    
+    return result.data || [];
   }
   
   /**

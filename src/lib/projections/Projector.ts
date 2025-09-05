@@ -344,12 +344,11 @@ export class ProjectionManager {
   private projectors: Map<string, Projector<any>>;
   
   private constructor() {
-    this.projectors = new Map([
-      ['operation', new OperationProjector()],
-      ['roster', new RosterProjector()],
-      ['iap', new IAPProjector()],
-      ['metrics', new MetricsProjector()],
-    ]);
+    this.projectors = new Map<string, any>();
+    this.projectors.set('operation', new OperationProjector());
+    this.projectors.set('roster', new RosterProjector());
+    this.projectors.set('iap', new IAPProjector());
+    this.projectors.set('metrics', new MetricsProjector());
   }
   
   static getInstance(): ProjectionManager {

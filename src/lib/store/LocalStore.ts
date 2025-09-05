@@ -231,7 +231,7 @@ export class LocalStore {
     
     const items = await this.db.inbox
       .where('processed')
-      .equals(false)
+      .equals(0)  // Dexie stores booleans as 0/1
       .sortBy('timestamp');
     
     for (const item of items) {
@@ -331,7 +331,7 @@ export class LocalStore {
     // Clean processed inbox items
     await this.db.inbox
       .where('processed')
-      .equals(true)
+      .equals(1)  // Dexie stores booleans as 0/1
       .filter(item => item.processedAt! < cutoff)
       .delete();
     

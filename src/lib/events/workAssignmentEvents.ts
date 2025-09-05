@@ -24,8 +24,7 @@ let db: DatabaseManager | null = null;
 
 async function getDb(): Promise<DatabaseManager> {
   if (!db) {
-    db = new DatabaseManager();
-    await db.initialize();
+    db = DatabaseManager.getInstance();
   }
   return db;
 }

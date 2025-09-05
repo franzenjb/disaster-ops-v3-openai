@@ -116,7 +116,7 @@ export function StepGeography({ data, onUpdate, onNext, onPrev }: StepGeographyP
     onUpdate({
       ...formData,
       states: derived.states,
-      chapters: derived.chapters,
+      chapters: derived.chapters as any[],
       counties: countyObjects as any[]
     });
     onNext();

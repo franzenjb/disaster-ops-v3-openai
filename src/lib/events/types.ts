@@ -110,6 +110,10 @@ export enum EventType {
   USER_STOPPED_EDITING = 'collab.editing_stopped',
   
   // Sync & System
+  SETUP_STEP_COMPLETED = 'system.setup_step_completed',
+  SETUP_COMPLETED = 'system.setup_completed',
+  ONLINE_MODE = 'system.online_mode',
+  OFFLINE_MODE = 'system.offline_mode',
   SYNC_STARTED = 'system.sync_started',
   SYNC_COMPLETED = 'system.sync_completed',
   SYNC_FAILED = 'system.sync_failed',
@@ -120,6 +124,8 @@ export enum EventType {
   SNAPSHOT_CREATED = 'data.snapshot_created',
   MIGRATION_APPLIED = 'data.migration_applied',
   REDACTION_APPLIED = 'data.redaction_applied', // For PII removal
+  DATA_IMPORTED = 'data.imported',
+  DATA_EXPORTED = 'data.exported',
 }
 
 // Payload schemas for each event type

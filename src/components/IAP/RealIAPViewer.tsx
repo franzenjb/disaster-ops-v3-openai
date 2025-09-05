@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { V27_IAP_DATA } from '@/data/v27-iap-data';
 import { simpleStore } from '@/lib/simple-store';
+import { IAPCoverPage } from './IAPCoverPage';
+import { IAPPage2 } from './IAPPage2';
 
 interface RealIAPViewerProps {
   onNavigate?: (view: string) => void;
@@ -14,62 +16,32 @@ export function RealIAPViewer({ onNavigate }: RealIAPViewerProps = {}) {
   
   // Pages matching actual Red Cross IAP structure
   const pages = [
-    { id: 'cover', label: 'Cover Page', pageNum: 1 },
-    { id: 'message', label: "Director's Message", pageNum: 2 },
-    { id: 'org-chart', label: 'Organization Chart', pageNum: 3 },
-    { id: 'work-sites', label: 'Work Sites Table', pageNum: 4 },
-    { id: 'sheltering', label: 'Sheltering Assignments', pageNum: 6 },
+    { id: 'cover', label: 'Cover Page (with checklist)', pageNum: 1 },
+    { id: 'page2', label: 'Cover Page (clean)', pageNum: 2 },
+    { id: 'message', label: "Director's Message", pageNum: 3 },
+    { id: 'priorities', label: 'Priorities & Objectives', pageNum: 4 },
+    { id: 'org-chart', label: 'Organization Chart', pageNum: 5 },
+    { id: 'work-sites', label: 'Work Sites Table', pageNum: 6 },
+    { id: 'sheltering', label: 'Sheltering Assignments', pageNum: 8 },
     { id: 'feeding', label: 'Feeding Assignments', pageNum: 15 },
     { id: 'contacts', label: 'Contact Roster', pageNum: 34 },
     { id: 'schedule', label: 'Daily Schedule', pageNum: 45 }
   ];
 
   const renderCoverPage = () => (
-    <div className="bg-white p-8 max-w-4xl mx-auto">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">INCIDENT ACTION PLAN</h1>
-        <h2 className="text-2xl font-semibold text-red-600">American Red Cross</h2>
-      </div>
-      
-      <div className="border-2 border-black p-6 mb-6">
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <p className="font-semibold">DR Number:</p>
-            <p className="text-lg">{V27_IAP_DATA.operation.drNumber}</p>
-          </div>
-          <div>
-            <p className="font-semibold">Operation:</p>
-            <p className="text-lg">{V27_IAP_DATA.operation.name}</p>
-          </div>
-        </div>
-        
-        <div className="mb-4">
-          <p className="font-semibold">Event(s):</p>
-          <p className="text-lg">{V27_IAP_DATA.operation.events}</p>
-        </div>
-        
-        <div className="border-t-2 border-black pt-4 mt-4">
-          <p className="font-semibold mb-2">Operational Period #{V27_IAP_DATA.operation.operationalPeriod.number}</p>
-          <p className="text-lg">
-            {new Date(V27_IAP_DATA.operation.operationalPeriod.start).toLocaleString()} - 
-            {new Date(V27_IAP_DATA.operation.operationalPeriod.end).toLocaleString()}
-          </p>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-8">
-        <div>
-          <p className="font-semibold">Prepared By:</p>
-          <p>{V27_IAP_DATA.operation.preparedBy}</p>
-          <p className="text-sm text-gray-600">{V27_IAP_DATA.operation.preparedByTitle}</p>
-        </div>
-        <div>
-          <p className="font-semibold">Approved By:</p>
-          <p>{V27_IAP_DATA.operation.approvedBy}</p>
-          <p className="text-sm text-gray-600">{V27_IAP_DATA.operation.approvedByTitle}</p>
-        </div>
-      </div>
-    </div>
+    <IAPCoverPage
+      drNumber={V27_IAP_DATA.operation.drNumber}
+      operationName={V27_IAP_DATA.operation.name}
+      operationalPeriod={V27_IAP_DATA.operation.operationalPeriod}
+      preparedBy={{
+        name: V27_IAP_DATA.operation.preparedBy,
+        title: V27_IAP_DATA.operation.preparedByTitle
+      }}
+      approvedBy={{
+        name: V27_IAP_DATA.operation.approvedBy,
+        title: V27_IAP_DATA.operation.approvedByTitle
+      }}
+    />
   );
 
   const renderWorkSitesTable = () => (
@@ -297,9 +269,27 @@ export function RealIAPViewer({ onNavigate }: RealIAPViewerProps = {}) {
     </div>
   );
 
+  const renderPage2 = () => (
+    <IAPPage2
+      drNumber={V27_IAP_DATA.operation.drNumber}
+      operationName={V27_IAP_DATA.operation.name}
+      events={V27_IAP_DATA.operation.events}
+      operationalPeriod={V27_IAP_DATA.operation.operationalPeriod}
+      preparedBy={{
+        name: "Alyson Gordon",
+        title: "Information & Planning Manager"
+      }}
+      approvedBy={{
+        name: "Betsy Witthohn",
+        title: "Job Director"
+      }}
+    />
+  );
+
   const renderCurrentPage = () => {
     switch(currentPage) {
       case 'cover': return renderCoverPage();
+      case 'page2': return renderPage2();
       case 'message': return renderDirectorsMessage();
       case 'work-sites': return renderWorkSitesTable();
       case 'sheltering': return renderShelteringAssignments();

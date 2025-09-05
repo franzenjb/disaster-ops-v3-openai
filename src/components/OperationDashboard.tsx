@@ -172,11 +172,11 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
           />
           
           <NavigationCard
-            title="View IAP Data"
-            description="See the current IAP data structure and content"
+            title="Generate IAP Document"
+            description="Create official 53-page IAP document matching Red Cross format"
             icon="📋"
             onClick={() => handleNavigate('iap-view')}
-            badge="Demo"
+            badge="NEW"
             working={true}
           />
           

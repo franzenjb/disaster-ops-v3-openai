@@ -97,6 +97,7 @@ export class IndexedDBAdapter implements IndexedDBDatabaseAdapter {
           });
           eventStore.createIndex('sync_status', 'sync_status', { unique: false });
           eventStore.createIndex('timestamp', 'timestamp', { unique: false });
+          eventStore.createIndex('type', 'type', { unique: false });
         }
         
         if (!db.objectStoreNames.contains('roster')) {
@@ -615,7 +616,7 @@ export function initializeDatabase(): DatabaseManager {
     },
     temporary: {
       dbName: 'disaster_ops_v3',
-      version: 1
+      version: 2
     }
   });
 }

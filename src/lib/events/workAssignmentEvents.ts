@@ -4,7 +4,7 @@
  */
 
 import { EventType, createEvent } from './types';
-import { DatabaseManager } from '../database/DatabaseManager';
+import { DatabaseManager, initializeDatabase } from '../database/DatabaseManager';
 
 // Simple UUID v4 generator for browser compatibility
 function uuidv4() {
@@ -24,7 +24,7 @@ let db: DatabaseManager | null = null;
 
 async function getDb(): Promise<DatabaseManager> {
   if (!db) {
-    db = DatabaseManager.getInstance();
+    db = initializeDatabase();
   }
   return db;
 }

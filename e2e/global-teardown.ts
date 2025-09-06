@@ -7,8 +7,8 @@ async function globalTeardown(config: FullConfig) {
   console.log('📊 Cleaning up test data...');
   
   // Clear any test data from global state
-  if (global.__TEST_DATA__) {
-    delete global.__TEST_DATA__;
+  if ((global as any).__TEST_DATA__) {
+    delete (global as any).__TEST_DATA__;
   }
   
   // Clean up any test files or temporary resources

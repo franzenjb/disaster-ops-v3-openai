@@ -105,7 +105,7 @@ async function setupTestData() {
   };
   
   // This test data will be available in E2E tests
-  global.__TEST_DATA__ = testData;
+  (global as any).__TEST_DATA__ = testData;
 }
 
 export default globalSetup;

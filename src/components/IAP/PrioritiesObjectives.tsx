@@ -313,17 +313,6 @@ export function PrioritiesObjectives() {
           </div>
         </div>
       </div>
-      
-      {/* Important Notes Section */}
-      <div className="mt-6 p-4 bg-yellow-50 border-2 border-yellow-400 rounded-lg">
-        <h4 className="font-bold text-lg mb-2">Important Notes:</h4>
-        <ul className="list-disc ml-6 space-y-1 text-sm">
-          <li>All objectives must be measurable and achievable within the operational period</li>
-          <li>Priorities should align with overall incident command strategy</li>
-          <li>Review and update at each planning meeting</li>
-          <li>Ensure all section chiefs are aware of current priorities and objectives</li>
-        </ul>
-      </div>
     </div>
   );
 }

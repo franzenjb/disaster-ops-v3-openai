@@ -1,39 +1,161 @@
-/* Print styles for IAP PDF export */
+/**
+ * Print-specific styles for IAP PDF export
+ * Ensures clean, professional output when printing
+ */
+
 @media print {
-  /* Hide navigation and action buttons */
+  /* Page setup */
+  @page {
+    size: letter portrait;
+    margin: 0.5in;
+  }
+  
+  /* Hide ALL buttons and interactive elements */
   .no-print,
-  button:not(.print-content),
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  [role="button"],
+  .btn-primary,
+  .btn-secondary,
+  .edit-button,
+  .delete-button,
+  .add-button,
+  .save-button,
+  .cancel-button,
+  [class*="hover:"],
+  [class*="cursor-pointer"],
   .bg-yellow-50,
   .flex.space-x-2,
-  .text-sm.text-gray-600 {
+  nav,
+  .navigation,
+  .sidebar,
+  .toolbar,
+  .modal,
+  .tooltip,
+  .dropdown,
+  .dropdown-menu,
+  .sidebar-toggle,
+  .collapse-button,
+  .expand-button,
+  select.no-print,
+  input.no-print,
+  textarea.no-print {
+    display: none !important;
+  }
+  
+  /* Hide edit mode controls and arrows */
+  .print-mode button[onclick*="toggleSection"],
+  button[onclick*="toggle"],
+  button[onclick*="edit"],
+  button[onclick*="save"],
+  button[onclick*="cancel"],
+  button[onclick*="delete"],
+  button[onclick*="add"],
+  button[onclick*="move"],
+  svg.cursor-pointer,
+  .edit-mode-indicator,
+  .editing-indicator,
+  [contenteditable="true"] {
     display: none !important;
   }
   
   /* Show all accordion content when printing */
   .iap-document.print-mode .border-t.border-gray-200,
-  .print-mode [class*="border-t"] {
+  .print-mode [class*="border-t"],
+  .border-t.border-gray-200 {
     display: block !important;
   }
   
-  /* Remove accordion arrows and interactive elements */
-  .print-mode button[onclick*="toggleSection"] {
-    display: none !important;
-  }
-  
-  /* Reset page margins */
-  @page {
-    margin: 0.5in;
-    size: letter;
-  }
-  
-  /* Ensure content fits on page */
+  /* Body and main content */
   body {
     font-size: 10pt;
     line-height: 1.4;
+    color: black !important;
+    background: white !important;
+  }
+  
+  /* Ensure content is visible */
+  main,
+  .print-content {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Make content full width */
+  .main-content {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+  
+  /* Headers */
+  h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 10pt;
+    color: black !important;
+    page-break-after: avoid;
+  }
+  
+  h2 {
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 8pt;
+    color: black !important;
+    page-break-after: avoid;
+  }
+  
+  h3 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin-bottom: 6pt;
+    color: black !important;
+    page-break-after: avoid;
+  }
+  
+  h4, h5, h6 {
+    color: black !important;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+  
+  /* Text elements */
+  p, span, div, li, td, th {
+    color: black !important;
+  }
+  
+  /* Table formatting */
+  table {
+    font-size: 9pt;
+    width: 100%;
+    border-collapse: collapse !important;
+    page-break-inside: avoid;
+  }
+  
+  thead {
+    display: table-header-group;
+  }
+  
+  tfoot {
+    display: table-footer-group;
+  }
+  
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  
+  th, td {
+    border: 1px solid #000 !important;
+    padding: 4px !important;
+    color: black !important;
   }
   
   /* Page breaks */
-  .page-break-before {
+  .page-break-before,
+  .page-break {
     page-break-before: always;
   }
   
@@ -45,48 +167,11 @@
     page-break-inside: avoid;
   }
   
-  /* Show all sections expanded */
-  .border-t.border-gray-200 {
-    display: block !important;
-  }
-  
-  /* Table formatting */
-  table {
-    font-size: 9pt;
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  th, td {
-    border: 1px solid #000 !important;
-    padding: 4px !important;
-  }
-  
-  /* Headers */
-  h1 {
-    font-size: 18pt;
-    font-weight: bold;
-    margin-bottom: 10pt;
-  }
-  
-  h2 {
-    font-size: 14pt;
-    font-weight: bold;
-    margin-bottom: 8pt;
-    page-break-after: avoid;
-  }
-  
-  h3 {
-    font-size: 12pt;
-    font-weight: bold;
-    margin-bottom: 6pt;
-    page-break-after: avoid;
-  }
-  
-  /* Ensure background colors print */
-  .bg-red-600 {
+  /* Preserve important background colors */
+  .bg-red-600,
+  .bg-red-100,
+  .bg-red-50 {
     background-color: #dc2626 !important;
-    color: white !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -104,13 +189,35 @@
     print-color-adjust: exact;
   }
   
-  .bg-gray-100 {
+  .bg-gray-100,
+  .bg-gray-50 {
     background-color: #f3f4f6 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
   
-  /* Remove shadows and rounded corners */
+  .bg-yellow-50,
+  .bg-yellow-100 {
+    background-color: #fef3c7 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .bg-green-50,
+  .bg-green-100 {
+    background-color: #d1fae5 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .bg-blue-50,
+  .bg-blue-100 {
+    background-color: #dbeafe !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Remove visual effects */
   * {
     box-shadow: none !important;
     text-shadow: none !important;
@@ -119,6 +226,7 @@
   .rounded-lg,
   .rounded-t-lg,
   .rounded-b-lg,
+  .rounded-md,
   .rounded {
     border-radius: 0 !important;
   }
@@ -129,26 +237,75 @@
     color: #000 !important;
   }
   
+  /* Don't show URLs for internal links */
+  a[href^="#"]:after,
+  a[href^="javascript:"]:after {
+    content: "" !important;
+  }
+  
   /* Images */
   img {
     max-width: 100% !important;
     page-break-inside: avoid;
   }
   
-  /* Org chart adjustments */
+  /* Forms - make read-only for print */
+  input:not([type="button"]):not([type="submit"]),
+  textarea,
+  select {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: black !important;
+  }
+  
+  /* Hide interactive form controls */
+  input[type="checkbox"],
+  input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  
+  /* Specific component adjustments */
+  
+  /* Org chart */
   .react-flow__renderer {
     height: auto !important;
     min-height: 600px !important;
   }
   
-  /* Contact roster formatting */
-  .contact-roster-item {
+  /* Contact roster */
+  .contact-roster-item,
+  .contact-roster-entry {
     page-break-inside: avoid;
   }
   
   /* Work assignments */
-  .work-assignment {
+  .work-assignment,
+  .work-assignment-row {
     page-break-inside: avoid;
+  }
+  
+  /* Facility cards */
+  .facility-card {
+    page-break-inside: avoid;
+    border: 1px solid #000 !important;
+    margin-bottom: 10px !important;
+  }
+  
+  /* IAP sections */
+  .iap-section {
+    page-break-inside: avoid;
+  }
+  
+  /* Priority and status badges */
+  .badge,
+  .status-badge,
+  .priority-badge {
+    border: 1px solid currentColor !important;
+    padding: 2px 4px !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   
   /* Footer on each page */
@@ -166,5 +323,30 @@
   /* Page numbers */
   .page-number:after {
     content: counter(page);
+  }
+  
+  /* Hide edit/delete/move controls in lists */
+  .flex.gap-1 button,
+  button:has(> svg),
+  button:contains("↑"),
+  button:contains("↓"),
+  button:contains("✕"),
+  button:contains("+") {
+    display: none !important;
+  }
+}
+
+/* Utility classes for print control */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .print-only {
+    display: block !important;
+  }
+  
+  .screen-only {
+    display: none !important;
   }
 }

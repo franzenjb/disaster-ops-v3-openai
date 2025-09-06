@@ -336,33 +336,33 @@ export function EnhancedFacilityManager({ onNavigate }: EnhancedFacilityManagerP
             <div className="p-4 overflow-y-auto flex-1">
               <div className="space-y-2">
                 {facilities.map((facility: any) => (
-                <button
-                  key={facility.id || facility.name}
-                  className="w-full text-left p-3 rounded-lg hover:bg-gray-100 border border-gray-200"
-                  onClick={() => {
-                    // Load or create assignment for this facility
-                    const existing = assignments.find(a => 
-                      a.site.name === facility.name
-                    );
-                    if (existing) {
-                      setSelectedAssignment(existing);
-                    } else {
-                      // Create new from facility
-                      handleCreateNew();
-                    }
-                  }}
-                >
-                  <div className="font-medium">{facility.name}</div>
-                  <div className="text-sm text-gray-600">{facility.county}</div>
-                  {facility.capacity && (
-                    <div className="text-sm text-gray-500">
-                      Capacity: {typeof facility.capacity === 'object' 
-                        ? `${facility.capacity.current || 0}/${facility.capacity.maximum || 0}`
-                        : facility.capacity}
-                    </div>
-                  )}
-                </button>
-              ))}
+                  <button
+                    key={facility.id || facility.name}
+                    className="w-full text-left p-3 rounded-lg hover:bg-gray-100 border border-gray-200"
+                    onClick={() => {
+                      // Load or create assignment for this facility
+                      const existing = assignments.find(a => 
+                        a.site.name === facility.name
+                      );
+                      if (existing) {
+                        setSelectedAssignment(existing);
+                      } else {
+                        // Create new from facility
+                        handleCreateNew();
+                      }
+                    }}
+                  >
+                    <div className="font-medium">{facility.name}</div>
+                    <div className="text-sm text-gray-600">{facility.county}</div>
+                    {facility.capacity && (
+                      <div className="text-sm text-gray-500">
+                        Capacity: {typeof facility.capacity === 'object' 
+                          ? `${facility.capacity.current || 0}/${facility.capacity.maximum || 0}`
+                          : facility.capacity}
+                      </div>
+                    )}
+                  </button>
+                ))}
               </div>
             </div>
           </div>

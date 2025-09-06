@@ -10,6 +10,9 @@
 import React, { useState } from 'react';
 import { IAPDocument } from './IAP/IAPDocument';
 import { EnhancedFacilityManager } from './FacilityManagement/EnhancedFacilityManager';
+import { TablesHub } from './TablesHub';
+import { FacilityMapSimple } from './FacilityMapSimple';
+import { IAPViewer } from './IAPViewer';
 import { User, Operation } from '../types';
 import { V27_IAP_DATA } from '../data/v27-iap-data';
 
@@ -18,7 +21,7 @@ interface OperationDashboardProps {
   user?: User;
 }
 
-type ViewType = 'iap' | 'facility-manager';
+type ViewType = 'iap' | 'iap-viewer' | 'facility-manager' | 'tables-hub' | 'facility-map';
 
 export function OperationDashboard({ operation, user }: OperationDashboardProps) {
   const [currentView, setCurrentView] = useState<ViewType>('iap');
@@ -74,7 +77,17 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              IAP Document
+              IAP Editor
+            </button>
+            <button
+              onClick={() => setCurrentView('iap-viewer')}
+              className={`px-4 py-2 rounded-md font-medium ${
+                currentView === 'iap-viewer'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              📄 IAP Viewer
             </button>
             <button
               onClick={() => setCurrentView('facility-manager')}
@@ -86,14 +99,37 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
             >
               Facility Manager (Gaps & Assets)
             </button>
+            <button
+              onClick={() => setCurrentView('tables-hub')}
+              className={`px-4 py-2 rounded-md font-medium ${
+                currentView === 'tables-hub'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              📊 Tables & Data Hub
+            </button>
+            <button
+              onClick={() => setCurrentView('facility-map')}
+              className={`px-4 py-2 rounded-md font-medium ${
+                currentView === 'facility-map'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              🗺️ Facility Map
+            </button>
           </div>
         </div>
       </div>
 
       {/* Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className={currentView === 'tables-hub' || currentView === 'facility-map' || currentView === 'iap-viewer' ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'}>
         {currentView === 'iap' && <IAPDocument />}
+        {currentView === 'iap-viewer' && <IAPViewer />}
         {currentView === 'facility-manager' && <EnhancedFacilityManager />}
+        {currentView === 'tables-hub' && <TablesHub />}
+        {currentView === 'facility-map' && <FacilityMapSimple />}
       </div>
     </div>
   );

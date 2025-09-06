@@ -9,6 +9,7 @@
 import React, { useState, useEffect } from 'react';
 import { V27_IAP_DATA } from '@/data/v27-iap-data';
 import { getAllFacilities } from '@/lib/events/workAssignmentEvents';
+import { GapIndicator, InlineGapIndicator } from '@/components/GapIndicator';
 
 interface FacilityManagementProps {
   onNavigate?: (view: string) => void;
@@ -279,9 +280,11 @@ export function RealFacilityManager({ onNavigate }: FacilityManagementProps) {
                       <div className="flex space-x-6 text-sm">
                         <span>Required: {selectedFacility.personnel.required}</span>
                         <span className="text-green-600">Have: {selectedFacility.personnel.have}</span>
-                        <span className={selectedFacility.personnel.gap > 0 ? 'text-red-600 font-bold' : 'text-gray-400'}>
-                          Gap: {selectedFacility.personnel.gap}
-                        </span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-700">Gap:</span>
+                          <GapIndicator gap={selectedFacility.personnel.gap} size="sm" showLabel={false} />
+                          <span className="font-medium">{selectedFacility.personnel.gap}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -323,9 +326,9 @@ export function RealFacilityManager({ onNavigate }: FacilityManagementProps) {
                               />
                             </td>
                             <td className="text-center py-3">
-                              <span className={`font-medium ${position.gap > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                                {position.gap}
-                              </span>
+                              <div className="flex items-center justify-center">
+                                <InlineGapIndicator gap={position.gap} />
+                              </div>
                             </td>
                             <td className="text-right py-3">
                               <button className="text-red-600 hover:text-red-800 text-sm">
@@ -386,9 +389,9 @@ export function RealFacilityManager({ onNavigate }: FacilityManagementProps) {
                               />
                             </td>
                             <td className="text-center py-3">
-                              <span className={`font-medium ${asset.gap > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                                {asset.gap}
-                              </span>
+                              <div className="flex items-center justify-center">
+                                <InlineGapIndicator gap={asset.gap} />
+                              </div>
                             </td>
                           </tr>
                         ))}

@@ -17,6 +17,12 @@ import { IAPWorkAssignmentsIndividualCare } from './IAPWorkAssignmentsIndividual
 import { ContactRoster } from './ContactRoster';
 import { OrgChartFlow } from './OrgChartFlow';
 import { PrioritiesObjectives } from './PrioritiesObjectives';
+import { DailySchedule } from './DailySchedule';
+import { MapsGeographic } from './MapsGeographic';
+import { AppendicesReferences } from './AppendicesReferences';
+import { WorkSitesFacilities } from './WorkSitesFacilities';
+import { PDFExport } from '../PDFExport';
+import { ClientOnly } from '../ClientOnly';
 
 interface IAPSection {
   id: string;
@@ -149,7 +155,11 @@ export function IAPDocument() {
       title: 'Daily Schedule',
       startPage: 45,
       endPage: 48,
-      content: () => <DailySchedule />
+      content: () => (
+        <ClientOnly fallback={<div className="p-4 text-gray-500">Loading schedule...</div>}>
+          <DailySchedule />
+        </ClientOnly>
+      )
     },
     {
       id: 'maps',
@@ -169,6 +179,19 @@ export function IAPDocument() {
 
   const toggleSection = (sectionId: string) => {
     setExpandedSection(expandedSection === sectionId ? '' : sectionId);
+  };
+
+  const expandAllSections = () => {
+    // Set expanded to 'all' to indicate all sections should be expanded
+    setExpandedSection('all');
+  };
+
+  const collapseAllSections = () => {
+    setExpandedSection('');
+  };
+
+  const isExpanded = (sectionId: string) => {
+    return expandedSection === 'all' || expandedSection === sectionId;
   };
 
   return (
@@ -198,15 +221,37 @@ export function IAPDocument() {
               <p>DR {V27_IAP_DATA.operation.drNumber} - {V27_IAP_DATA.operation.name}</p>
               <p className="text-sm">Operational Period: {V27_IAP_DATA.operation.operationalPeriod.start} to {V27_IAP_DATA.operation.operationalPeriod.end}</p>
             </div>
-            <button 
-              onClick={handleReturnToDashboard}
-              className="bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-100 font-semibold flex items-center gap-2 no-print"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Return to Dashboard
-            </button>
+            <div className="flex gap-2 items-center">
+              <PDFExport data={V27_IAP_DATA} />
+              
+              {/* Expand/Collapse All Buttons */}
+              <div className="flex gap-1 no-print">
+                <button 
+                  onClick={expandAllSections}
+                  className="bg-white text-red-600 px-3 py-2 rounded hover:bg-gray-100 text-sm font-medium"
+                  title="Expand All Sections"
+                >
+                  ⬇ Expand All
+                </button>
+                <button 
+                  onClick={collapseAllSections}
+                  className="bg-white text-red-600 px-3 py-2 rounded hover:bg-gray-100 text-sm font-medium"
+                  title="Collapse All Sections"
+                >
+                  ⬆ Collapse All
+                </button>
+              </div>
+              
+              <button 
+                onClick={handleReturnToDashboard}
+                className="bg-white text-red-600 px-4 py-2 rounded hover:bg-gray-100 font-semibold flex items-center gap-2 no-print"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Return to Dashboard
+              </button>
+            </div>
           </div>
         </div>
 
@@ -220,7 +265,7 @@ export function IAPDocument() {
                 className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors no-print"
               >
                 <div className="flex items-center space-x-4">
-                  <span className={`transform transition-transform ${expandedSection === section.id ? 'rotate-90' : ''}`}>
+                  <span className={`transform transition-transform ${isExpanded(section.id) ? 'rotate-90' : ''}`}>
                     ▶
                   </span>
                   <div className="text-left">
@@ -236,7 +281,7 @@ export function IAPDocument() {
               </button>
 
               {/* Section Content */}
-              {expandedSection === section.id && (
+              {isExpanded(section.id) && (
                 <div className="border-t border-gray-200">
                   <div className="p-4 bg-gray-50">
                     {section.content()}
@@ -476,93 +521,5 @@ function ClientServicesAssignments() {
 
 // ContactRoster component is now imported from ./ContactRoster.tsx
 
-function WorkSitesFacilities() {
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Work Sites and Facilities</h2>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="p-2 text-left">Facility</th>
-            <th className="p-2 text-left">Type</th>
-            <th className="p-2 text-left">Address</th>
-            <th className="p-2 text-left">County</th>
-          </tr>
-        </thead>
-        <tbody>
-          {V27_IAP_DATA.workSites.slice(0, 10).map((site, idx) => (
-            <tr key={idx}>
-              <td className="p-2">{site.facility}</td>
-              <td className="p-2">{site.type}</td>
-              <td className="p-2">{site.address}</td>
-              <td className="p-2">{site.county}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
 
-function DailySchedule() {
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Daily Schedule</h2>
-      <table className="w-full">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="p-2 text-left">Time</th>
-            <th className="p-2 text-left">Activity</th>
-            <th className="p-2 text-left">Location</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td className="p-2">0600</td><td className="p-2">Shift Change</td><td className="p-2">All Sites</td></tr>
-          <tr><td className="p-2">0700</td><td className="p-2">Morning Briefing</td><td className="p-2">DRO HQ</td></tr>
-          <tr><td className="p-2">1200</td><td className="p-2">Situation Update</td><td className="p-2">Virtual</td></tr>
-          <tr><td className="p-2">1300</td><td className="p-2">Tactics Meeting</td><td className="p-2">DRO HQ</td></tr>
-          <tr><td className="p-2">1600</td><td className="p-2">Planning Meeting</td><td className="p-2">DRO HQ</td></tr>
-          <tr><td className="p-2">1800</td><td className="p-2">IAP Distribution</td><td className="p-2">All Sites</td></tr>
-          <tr><td className="p-2">1800</td><td className="p-2">Shift Change</td><td className="p-2">All Sites</td></tr>
-        </tbody>
-      </table>
-    </div>
-  );
-}
 
-function MapsGeographic() {
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Maps and Geographic Information</h2>
-      <div className="border-2 border-gray-300 h-96 flex items-center justify-center bg-gray-50">
-        <p className="text-gray-500">Operational area maps and facility locations</p>
-      </div>
-    </div>
-  );
-}
-
-function AppendicesReferences() {
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Appendices and References</h2>
-      <div className="space-y-4">
-        <div>
-          <h3 className="font-semibold">Reference Documents:</h3>
-          <ul className="list-disc ml-6">
-            <li>Red Cross Disaster Operations Manual</li>
-            <li>State Emergency Response Plan</li>
-            <li>County EOC Coordination Procedures</li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="font-semibold">Important Links:</h3>
-          <ul className="list-disc ml-6">
-            <li>RCView Dashboard</li>
-            <li>WebEOC Portal</li>
-            <li>FEMA Resource Portal</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
-}

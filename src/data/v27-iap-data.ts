@@ -12,8 +12,8 @@ export const V27_IAP_DATA = {
     events: 'Hurricane Helene and Milton',
     operationalPeriod: {
       number: 27,
-      start: '2024-10-20T06:00:00',
-      end: '2024-10-21T05:59:00'
+      start: 'Oct 20, 2024 - 06:00',
+      end: 'Oct 21, 2024 - 05:59'
     },
     preparedBy: 'Alyson Gordon',
     preparedByTitle: 'Information & Planning Manager',

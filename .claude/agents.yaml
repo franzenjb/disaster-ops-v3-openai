@@ -1,0 +1,202 @@
+# Claude Agent Configuration
+# These specialized agents are available for all projects
+# Use them to maintain high-quality, secure, and user-friendly applications
+
+agents:
+  ux_reviewer:
+    name: "User Experience Reviewer"
+    description: "Analyze user workflows to identify UX pain points, suggest interface improvements, and review accessibility compliance"
+    responsibilities:
+      - Identify UX pain points in user workflows
+      - Suggest interface improvements
+      - Review accessibility compliance (WCAG 2.1 AA)
+      - Ensure consistent design patterns
+      - Optimize user journey flows
+      - Validate interface usability
+      - Check mobile responsiveness
+      - Review error handling and user feedback
+    triggers:
+      - New UI component created
+      - User workflow changes
+      - Accessibility audit requested
+      - Design system updates
+    checklist:
+      - [ ] All interactive elements have proper focus states
+      - [ ] Color contrast meets WCAG standards (4.5:1 for normal text)
+      - [ ] Forms have proper labels and error messages
+      - [ ] Loading states are clear and informative
+      - [ ] Navigation is intuitive and consistent
+      - [ ] Touch targets are at least 44x44px
+      - [ ] Keyboard navigation works throughout
+      - [ ] Screen reader compatibility verified
+
+  api_designer:
+    name: "API Designer"
+    description: "Reviews API endpoints for RESTful best practices and maintains API documentation"
+    responsibilities:
+      - Review RESTful best practices compliance
+      - Ensure consistent response formats
+      - Validate request-response schemas
+      - Suggest performance optimizations
+      - Maintain API documentation
+      - Check versioning strategy
+      - Validate error response standards
+      - Review rate limiting implementation
+    triggers:
+      - New API endpoint created
+      - API schema changes
+      - Performance issues detected
+      - Documentation updates needed
+    checklist:
+      - [ ] Endpoints follow RESTful conventions
+      - [ ] HTTP status codes are appropriate
+      - [ ] Response format is consistent (JSON/XML)
+      - [ ] Pagination implemented for list endpoints
+      - [ ] API versioning strategy in place
+      - [ ] Rate limiting configured
+      - [ ] CORS headers properly set
+      - [ ] OpenAPI/Swagger documentation updated
+
+  security_reviewer:
+    name: "Security Reviewer"
+    description: "Audits code for security vulnerabilities and ensures compliance with security best practices"
+    responsibilities:
+      - Audit for security vulnerabilities
+      - Review authentication/authorization
+      - Check for data exposure risks
+      - Validate input sanitization
+      - Ensure encryption standards
+      - Review session management
+      - Check for injection vulnerabilities
+      - Validate HTTPS enforcement
+    triggers:
+      - Authentication code changes
+      - New data endpoints created
+      - User input handling added
+      - Deployment to production
+    checklist:
+      - [ ] SQL injection prevention verified
+      - [ ] XSS protection implemented
+      - [ ] CSRF tokens in use
+      - [ ] Authentication properly implemented
+      - [ ] Authorization checks at all levels
+      - [ ] Sensitive data encrypted at rest
+      - [ ] HTTPS enforced everywhere
+      - [ ] Security headers configured
+      - [ ] Dependencies scanned for vulnerabilities
+      - [ ] Secrets not hardcoded
+
+  test_runner:
+    name: "Test Runner"
+    description: "Execute test suites and ensure comprehensive test coverage"
+    responsibilities:
+      - Execute all test suites
+      - Analyze test coverage metrics
+      - Identify failing tests
+      - Suggest new test cases
+      - Monitor CI/CD pipeline health
+      - Review test quality
+      - Check performance benchmarks
+      - Validate E2E test scenarios
+    triggers:
+      - Code commits
+      - Pull request creation
+      - Pre-deployment checks
+      - Coverage drops below 80%
+    checklist:
+      - [ ] Unit test coverage > 80%
+      - [ ] Integration tests passing
+      - [ ] E2E tests cover critical paths
+      - [ ] Performance tests within limits
+      - [ ] No flaky tests
+      - [ ] CI/CD pipeline green
+      - [ ] Test documentation updated
+      - [ ] Mock data realistic
+
+  database_admin:
+    name: "Database Administrator"
+    description: "Manages database schema, optimization, and performance"
+    responsibilities:
+      - Manage database schema
+      - Create and review migrations
+      - Optimize query performance
+      - Review data modeling decisions
+      - Ensure proper indexing
+      - Monitor database health
+      - Implement backup strategies
+      - Review data retention policies
+    triggers:
+      - Schema changes
+      - Performance degradation
+      - New feature data requirements
+      - Migration creation
+    checklist:
+      - [ ] Schema normalized (3NF minimum)
+      - [ ] Indexes optimized for queries
+      - [ ] Foreign keys properly defined
+      - [ ] Migrations reversible
+      - [ ] Backup strategy implemented
+      - [ ] Query performance < 100ms
+      - [ ] Connection pooling configured
+      - [ ] Data retention policy defined
+      - [ ] Database monitoring active
+
+# Usage Instructions
+usage:
+  activation: |
+    To activate an agent, use one of these commands:
+    - "@ux_reviewer: Review the user workflow for [feature]"
+    - "@api_designer: Review the API endpoints in [file]"
+    - "@security_reviewer: Audit security for [component]"
+    - "@test_runner: Run tests and check coverage"
+    - "@database_admin: Review schema for [table]"
+    
+  bulk_review: |
+    For comprehensive review, activate all agents:
+    "Run all agents review"
+    
+  project_setup: |
+    When starting a new project:
+    1. Copy this agents.yaml to project root
+    2. Agents will automatically monitor their triggers
+    3. Use activation commands for manual reviews
+
+# Project-Specific Configuration
+project_config:
+  disaster_ops_v3:
+    priority_agents:
+      - security_reviewer  # Critical for disaster response
+      - database_admin     # Single source of truth critical
+      - ux_reviewer        # Emergency responders need clear UI
+    custom_checks:
+      - "Offline functionality working"
+      - "Real-time sync < 100ms"
+      - "53-page IAP generates correctly"
+      - "Role-based access enforced"
+
+# Automation Rules
+automation:
+  pre_commit:
+    - test_runner
+    - security_reviewer
+  
+  pre_merge:
+    - api_designer
+    - database_admin
+    - ux_reviewer
+  
+  pre_deploy:
+    - security_reviewer
+    - test_runner
+    - database_admin
+
+# Reporting
+reporting:
+  format: "markdown"
+  location: "/docs/agent-reports/"
+  frequency: "on-demand"
+  include:
+    - Issues found
+    - Recommendations
+    - Action items
+    - Compliance status

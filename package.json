@@ -9,7 +9,27 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "deploy": "npm run build && touch out/.nojekyll && cp -r out _site",
-    "deploy:gh": "npm run build && touch out/.nojekyll && gh-pages -d out -t true"
+    "deploy:gh": "npm run build && touch out/.nojekyll && gh-pages -d out -t true",
+    "test": "jest",
+    "test:unit": "jest --testPathPatterns=\"src/.*\\.(test|spec)\\.(js|jsx|ts|tsx)$\" --testPathIgnorePatterns=\"integration|e2e|performance\"",
+    "test:integration": "jest --testPathPatterns=\"src/.*integration.*\\.(test|spec)\\.(js|jsx|ts|tsx)$\"",
+    "test:performance": "jest --testPathPatterns=\"src/.*performance.*\\.(test|spec)\\.(js|jsx|ts|tsx)$\" --testTimeout=30000",
+    "test:e2e": "playwright test",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "npm run test:unit && npm run test:integration && npm run test:performance && npm run test:e2e",
+    "test:debug": "jest --detectOpenHandles --runInBand --no-cache",
+    "playwright:install": "npx playwright install",
+    "playwright:update": "npx playwright install --with-deps",
+    "playwright:ui": "playwright test --ui",
+    "playwright:report": "npx playwright show-report",
+    "test:critical": "jest --testNamePattern=\"CRITICAL\"",
+    "test:smoke": "jest --testPathPatterns=\"smoke\" --testTimeout=60000",
+    "test:load": "jest --testPathPatterns=\"performance\" --testNamePattern=\"load|stress|concurrent\"",
+    "coverage:open": "open coverage/lcov-report/index.html",
+    "coverage:clean": "rm -rf coverage",
+    "pretest": "npm run type-check && npm run lint",
+    "posttest": "npm run coverage:clean"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +43,8 @@
     "autoprefixer": "^10.4.21",
     "d3": "^7.9.0",
     "dexie": "^4.2.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.2",
     "next": "^15.5.2",
     "postcss": "^8.5.6",
     "react": "^19.1.1",
@@ -38,9 +60,19 @@
     "zod": "^4.1.5"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.0.0",
+    "@jest/globals": "^30.1.2",
+    "@playwright/test": "^1.55.0",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@typescript-eslint/eslint-plugin": "^8.42.0",
     "@typescript-eslint/parser": "^8.42.0",
     "eslint": "^9.34.0",
-    "eslint-config-next": "^15.5.2"
+    "eslint-config-next": "^15.5.2",
+    "jest": "^30.1.3",
+    "jest-environment-jsdom": "^30.1.2",
+    "ts-jest": "^29.4.1"
   }
 }

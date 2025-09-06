@@ -5,10 +5,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Common Development Commands
 
 ```bash
-npm run dev        # Start Next.js dev server at http://localhost:3000
-npm run build      # Build production bundle
-npm run lint       # Run ESLint
-npm run type-check # Run TypeScript type checking
+npm run dev               # Start Next.js dev server at http://localhost:3000
+npm run build            # Build production bundle  
+npm run lint             # Run ESLint
+npm run type-check       # Run TypeScript type checking
+
+# Testing Commands
+npm run test             # Run all Jest tests
+npm run test:unit        # Run unit tests only
+npm run test:integration # Run integration tests
+npm run test:performance # Run performance tests (30s timeout)
+npm run test:e2e         # Run Playwright E2E tests
+npm run test:watch       # Run tests in watch mode
+npm run test:coverage    # Generate coverage report
+npm run test:critical    # Run tests marked CRITICAL
+npm run test:smoke       # Run smoke tests (60s timeout)
+
+# Single test execution
+npm test -- --testNamePattern="should create facility"  # Run specific test by name
+npm test -- src/lib/services/__tests__/MasterDataService.test.ts  # Run specific test file
 ```
 
 ## Architecture Overview
@@ -154,3 +169,99 @@ Main types in `/src/types/index.ts`:
 4. Check outbox for pending sync items
 5. Monitor EventBus events in console (when in dev mode)
 6. Test role-based access by changing user.iapRole in components
+
+## Data Files
+
+### Personnel and Operational Data
+
+**Personnel Database** (`/src/data/personnel-database.ts`)
+- 500+ pre-populated Red Cross responders with roles, certifications, and contact info
+- Used for roster quick-fill and personnel assignments
+
+**GAP Codes** (`/src/data/gap-codes.ts`)
+- 900+ Red Cross GAP (General Accounting Practice) codes for financial tracking
+- Hierarchical structure: Chapter → Activity → Project
+
+**Assets Database** (`/src/data/assets.ts`)
+- Vehicle fleet data (ERVs, Box Trucks, Staff Vehicles)
+- Equipment inventory (generators, trailers, communication gear)
+- Supply categories and standard configurations
+
+**V27 IAP Sample Data** (`/src/data/v27-iap-data.ts`)
+- Complete 53-page IAP example from Hurricane operation
+- Used as template and testing reference
+
+### PDF Generation System
+
+**IAPPdfGenerator** (`/src/lib/pdf/IAPPdfGenerator.ts`)
+- Generates complete 53-page IAP documents using jsPDF
+- Professional Red Cross formatting and branding
+- Includes all ICS forms (201-207)
+- Cover photos, organizational charts, and work assignments
+
+**PDF Export Component** (`/src/components/PDFExport.tsx`)
+- UI component for generating and previewing PDFs
+- Integrated with IAP Dashboard and Viewer
+
+### Testing Infrastructure
+
+**Test Coverage Requirements**
+- Unit tests: 80% minimum coverage
+- Integration tests: All API endpoints and data flows
+- Performance tests: <100ms query time, <5s IAP generation
+- E2E tests: Critical user workflows
+
+**Test Organization**
+- `__tests__` folders co-located with components
+- Performance tests in `*.performance.test.ts` files
+- Integration tests in `*.integration.test.ts` files
+- Mock data uses faker.js for realistic test scenarios
+
+### Agent Configuration
+
+**Agent System** (`/.claude/agents.yaml`)
+- 5 specialized agents for code quality:
+  - UX Reviewer: Accessibility and interface design
+  - API Designer: RESTful standards and documentation
+  - Security Reviewer: Vulnerability audits
+  - Test Runner: Coverage and CI/CD health
+  - Database Admin: Schema optimization
+
+**Activation Commands**
+```bash
+@ux_reviewer: Review the IAP dashboard workflow
+@database_admin: Review single source of truth architecture
+@security_reviewer: Audit role-based access control
+@test_runner: Run tests and check coverage
+@api_designer: Review API endpoints
+```
+
+## Critical Requirements
+
+### Single Source of Truth
+- Tables Hub is THE authoritative data source
+- All components read from and write to Tables Hub
+- Bidirectional sync ensures data consistency
+- MasterDataService handles all data operations
+- Real-time updates across all views (<100ms)
+
+### Offline-First Design
+- Full functionality without internet connection
+- Local IndexedDB stores all operational data
+- Sync queue manages pending updates
+- Conflict resolution via event sourcing
+- No data loss during disconnections
+
+### IAP Generation
+- Must match exact Red Cross formatting standards
+- 53-page document with all required sections
+- Real-time data from operations
+- Role-based editing permissions
+- 6PM official snapshot system
+
+### Performance Targets
+- Page load: <2 seconds
+- Database queries: <100ms
+- IAP generation: <5 seconds
+- Real-time sync: <100ms
+- Offline mode: Instant response

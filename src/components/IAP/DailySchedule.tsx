@@ -1,178 +1,217 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { simpleStore } from '@/lib/simple-store';
-
-interface ScheduleItem {
-  id: string;
-  time: string;
-  event: string;
-  location: string;
-  responsible: string;
-  notes?: string;
-}
+import { useDailySchedule } from '@/hooks/useMasterData';
+import { initializeMasterDataService, DailyScheduleEntry } from '@/lib/services/MasterDataService';
 
 export function DailySchedule() {
-  const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [editMode, setEditMode] = useState(false);
   const [editingItem, setEditingItem] = useState<string | null>(null);
+  const [currentOperationId] = useState<string>('op-current');
   
+  // Initialize master data service
   useEffect(() => {
-    // Load schedule from storage or use defaults
-    const savedSchedule = simpleStore.getDailySchedule ? simpleStore.getDailySchedule() : null;
-    if (savedSchedule && savedSchedule.length > 0) {
-      setSchedule(savedSchedule);
-    } else {
-      // Default Red Cross IAP schedule
-      setSchedule([
+    initializeMasterDataService(currentOperationId);
+  }, [currentOperationId]);
+  
+  // Use master data hook - THE SINGLE SOURCE OF TRUTH
+  const { 
+    schedule, 
+    loading, 
+    error, 
+    updateEntry, 
+    addEntry, 
+    deleteEntry, 
+    lastUpdate 
+  } = useDailySchedule(currentOperationId);
+  
+  // Initialize default schedule if empty (only once)
+  useEffect(() => {
+    if (!loading && schedule.length === 0) {
+      const defaultEntries: Omit<DailyScheduleEntry, 'id'>[] = [
         {
-          id: '1',
+          operation_id: currentOperationId,
           time: '06:00',
-          event: 'Operational Period Begins',
+          event_name: 'Operational Period Begins',
           location: 'All Sites',
-          responsible: 'All Personnel',
-          notes: 'Day shift reporting time'
+          responsible_party: 'All Personnel',
+          notes: 'Day shift reporting time',
+          event_type: 'operation'
         },
         {
-          id: '2',
+          operation_id: currentOperationId,
           time: '07:00',
-          event: 'Morning Briefing',
+          event_name: 'Morning Briefing',
           location: 'DRO HQ / Virtual',
-          responsible: 'DRO Director',
-          notes: 'Daily operational briefing for all section chiefs'
+          responsible_party: 'DRO Director',
+          notes: 'Daily operational briefing for all section chiefs',
+          event_type: 'briefing'
         },
         {
-          id: '3',
+          operation_id: currentOperationId,
           time: '08:00',
-          event: 'Shelter Operations Begin',
+          event_name: 'Shelter Operations Begin',
           location: 'All Shelters',
-          responsible: 'Shelter Managers',
-          notes: 'Morning shift change'
+          responsible_party: 'Shelter Managers',
+          notes: 'Morning shift change',
+          event_type: 'operation'
         },
         {
-          id: '4',
+          operation_id: currentOperationId,
           time: '09:00',
-          event: 'Feeding Operations Begin',
+          event_name: 'Feeding Operations Begin',
           location: 'All Kitchens/ERVs',
-          responsible: 'Feeding Manager',
-          notes: 'ERV departure for routes'
+          responsible_party: 'Feeding Manager',
+          notes: 'ERV departure for routes',
+          event_type: 'operation'
         },
         {
-          id: '5',
+          operation_id: currentOperationId,
           time: '10:00',
-          event: 'EOC Coordination Call',
+          event_name: 'EOC Coordination Call',
           location: 'State EOC',
-          responsible: 'Government Operations',
-          notes: 'Daily state/county coordination'
+          responsible_party: 'Government Operations',
+          notes: 'Daily state/county coordination',
+          event_type: 'meeting'
         },
         {
-          id: '6',
+          operation_id: currentOperationId,
           time: '12:00',
-          event: 'Midday Status Update',
+          event_name: 'Midday Status Update',
           location: 'Virtual',
-          responsible: 'All Section Chiefs',
-          notes: 'Quick status check'
+          responsible_party: 'All Section Chiefs',
+          notes: 'Quick status check',
+          event_type: 'briefing'
         },
         {
-          id: '7',
+          operation_id: currentOperationId,
           time: '14:00',
-          event: 'Planning Meeting',
+          event_name: 'Planning Meeting',
           location: 'DRO HQ',
-          responsible: 'Planning Section',
-          notes: 'Next operational period planning'
+          responsible_party: 'Planning Section',
+          notes: 'Next operational period planning',
+          event_type: 'meeting'
         },
         {
-          id: '8',
+          operation_id: currentOperationId,
           time: '16:00',
-          event: 'Resource Request Deadline',
+          event_name: 'Resource Request Deadline',
           location: 'N/A',
-          responsible: 'Logistics',
-          notes: 'Deadline for next day resource requests'
+          responsible_party: 'Logistics',
+          notes: 'Deadline for next day resource requests',
+          event_type: 'deadline'
         },
         {
-          id: '9',
+          operation_id: currentOperationId,
           time: '17:00',
-          event: 'Evening Briefing',
+          event_name: 'Evening Briefing',
           location: 'DRO HQ / Virtual',
-          responsible: 'DRO Director',
-          notes: 'End of day status and night operations'
+          responsible_party: 'DRO Director',
+          notes: 'End of day status and night operations',
+          event_type: 'briefing'
         },
         {
-          id: '10',
+          operation_id: currentOperationId,
           time: '18:00',
-          event: 'IAP Publication',
+          event_name: 'IAP Publication',
           location: 'N/A',
-          responsible: 'Planning Section',
-          notes: 'Next operational period IAP released'
+          responsible_party: 'Planning Section',
+          notes: 'Next operational period IAP released',
+          event_type: 'deadline'
         },
         {
-          id: '11',
+          operation_id: currentOperationId,
           time: '19:00',
-          event: 'Night Shift Change',
+          event_name: 'Night Shift Change',
           location: 'All 24hr Sites',
-          responsible: 'Night Supervisors',
-          notes: 'Night shift reporting time'
+          responsible_party: 'Night Supervisors',
+          notes: 'Night shift reporting time',
+          event_type: 'operation'
         },
         {
-          id: '12',
+          operation_id: currentOperationId,
           time: '21:00',
-          event: 'Night Operations Check',
+          event_name: 'Night Operations Check',
           location: 'Virtual',
-          responsible: 'Night Operations Chief',
-          notes: 'Status check for overnight operations'
+          responsible_party: 'Night Operations Chief',
+          notes: 'Status check for overnight operations',
+          event_type: 'operation'
         }
-      ]);
+      ];
+      
+      // Add default entries to master database
+      defaultEntries.forEach(entry => addEntry(entry));
     }
-  }, []);
+  }, [loading, schedule.length, currentOperationId, addEntry]);
   
   const handleSave = () => {
-    // Save to storage
-    if (simpleStore.saveDailySchedule) {
-      simpleStore.saveDailySchedule(schedule);
-    }
+    // Data is already saved via master data service automatically
     setEditMode(false);
     setEditingItem(null);
   };
   
-  const handleAddItem = () => {
-    const newItem: ScheduleItem = {
-      id: `new-${Date.now()}`,
-      time: '00:00',
-      event: 'New Event',
-      location: '',
-      responsible: '',
-      notes: ''
-    };
-    setSchedule([...schedule, newItem].sort((a, b) => a.time.localeCompare(b.time)));
-    setEditingItem(newItem.id);
+  const handleAddItem = async () => {
+    try {
+      const newEntry: Omit<DailyScheduleEntry, 'id'> = {
+        operation_id: currentOperationId,
+        time: '00:00',
+        event_name: 'New Event',
+        location: '',
+        responsible_party: '',
+        notes: '',
+        event_type: 'operation'
+      };
+      
+      const newId = await addEntry(newEntry);
+      setEditingItem(newId);
+    } catch (error) {
+      console.error('Error adding schedule entry:', error);
+      alert('Failed to add new event. Please try again.');
+    }
   };
   
-  const handleDeleteItem = (id: string) => {
-    setSchedule(schedule.filter(item => item.id !== id));
+  const handleDeleteItem = async (id: string) => {
+    try {
+      await deleteEntry(id);
+    } catch (error) {
+      console.error('Error deleting schedule entry:', error);
+      alert('Failed to delete event. Please try again.');
+    }
   };
   
-  const updateItem = (id: string, field: keyof ScheduleItem, value: string) => {
-    setSchedule(prev => {
-      const updated = prev.map(item => 
-        item.id === id ? { ...item, [field]: value } : item
-      );
-      // Re-sort if time was changed
-      if (field === 'time') {
-        return updated.sort((a, b) => a.time.localeCompare(b.time));
+  const updateItem = async (id: string, field: keyof DailyScheduleEntry, value: string) => {
+    try {
+      const currentEntry = schedule.find(item => item.id === id);
+      if (currentEntry) {
+        const updatedEntry = { ...currentEntry, [field]: value };
+        await updateEntry(updatedEntry);
       }
-      return updated;
-    });
+    } catch (error) {
+      console.error('Error updating schedule entry:', error);
+      alert('Failed to update event. Please try again.');
+    }
   };
   
   return (
     <div className="p-4">
       {/* Header */}
       <div className="bg-gray-700 text-white p-3 flex justify-between items-center">
-        <h2 className="text-xl font-bold">Daily Schedule</h2>
+        <div>
+          <h2 className="text-xl font-bold">Daily Schedule</h2>
+          {lastUpdate && (
+            <p className="text-sm text-gray-300">
+              Last updated: {lastUpdate.toLocaleTimeString()}
+            </p>
+          )}
+          {loading && <p className="text-sm text-yellow-300">⏳ Loading schedule...</p>}
+          {error && <p className="text-sm text-red-300">❌ Error: {error.message}</p>}
+        </div>
         <div className="flex gap-2">
           <button
             onClick={() => setEditMode(!editMode)}
+            disabled={loading}
             className={`px-4 py-2 rounded font-semibold ${
+              loading ? 'bg-gray-600 cursor-not-allowed' :
               editMode 
                 ? 'bg-yellow-500 hover:bg-yellow-600 animate-pulse' 
                 : 'bg-blue-600 hover:bg-blue-700'
@@ -184,7 +223,12 @@ export function DailySchedule() {
             <>
               <button
                 onClick={handleAddItem}
-                className="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-semibold"
+                disabled={loading}
+                className={`px-3 py-2 rounded font-semibold ${
+                  loading 
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
               >
                 + Add Event
               </button>
@@ -192,7 +236,7 @@ export function DailySchedule() {
                 onClick={handleSave}
                 className="px-3 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 font-semibold"
               >
-                💾 Save All
+                💾 Exit Edit Mode
               </button>
             </>
           )}
@@ -227,97 +271,112 @@ export function DailySchedule() {
           </tr>
         </thead>
         <tbody>
-          {schedule.map((item, idx) => (
-            <tr key={item.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-              <td className="border border-black p-2 font-bold">
-                {editingItem === item.id ? (
-                  <input
-                    type="time"
-                    value={item.time}
-                    onChange={(e) => updateItem(item.id, 'time', e.target.value)}
-                    className="w-full px-1 border rounded"
-                  />
-                ) : (
-                  item.time
-                )}
+          {loading ? (
+            <tr>
+              <td colSpan={editMode ? 6 : 5} className="p-4 text-center text-gray-500">
+                ⏳ Loading schedule from master database...
               </td>
-              <td className="border border-black p-2">
-                {editingItem === item.id ? (
-                  <input
-                    type="text"
-                    value={item.event}
-                    onChange={(e) => updateItem(item.id, 'event', e.target.value)}
-                    className="w-full px-1 border rounded"
-                  />
-                ) : (
-                  <strong>{item.event}</strong>
-                )}
-              </td>
-              <td className="border border-black p-2">
-                {editingItem === item.id ? (
-                  <input
-                    type="text"
-                    value={item.location}
-                    onChange={(e) => updateItem(item.id, 'location', e.target.value)}
-                    className="w-full px-1 border rounded"
-                  />
-                ) : (
-                  item.location
-                )}
-              </td>
-              <td className="border border-black p-2">
-                {editingItem === item.id ? (
-                  <input
-                    type="text"
-                    value={item.responsible}
-                    onChange={(e) => updateItem(item.id, 'responsible', e.target.value)}
-                    className="w-full px-1 border rounded"
-                  />
-                ) : (
-                  item.responsible
-                )}
-              </td>
-              <td className="border border-black p-2">
-                {editingItem === item.id ? (
-                  <input
-                    type="text"
-                    value={item.notes || ''}
-                    onChange={(e) => updateItem(item.id, 'notes', e.target.value)}
-                    className="w-full px-1 border rounded"
-                  />
-                ) : (
-                  <span className="text-sm italic">{item.notes}</span>
-                )}
-              </td>
-              {editMode && (
-                <td className="border border-black p-2">
-                  <div className="flex gap-1">
-                    {editingItem === item.id ? (
-                      <button
-                        onClick={() => setEditingItem(null)}
-                        className="px-2 py-1 bg-green-600 text-white rounded text-xs"
-                      >
-                        Done
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setEditingItem(item.id)}
-                        className="px-2 py-1 bg-blue-600 text-white rounded text-xs"
-                      >
-                        Edit
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleDeleteItem(item.id)}
-                      className="px-2 py-1 bg-red-600 text-white rounded text-xs"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              )}
             </tr>
-          ))}
+          ) : schedule.length === 0 ? (
+            <tr>
+              <td colSpan={editMode ? 6 : 5} className="p-4 text-center text-gray-500">
+                No schedule entries found. Default schedule will be created automatically.
+              </td>
+            </tr>
+          ) : (
+            schedule.map((item, idx) => (
+              <tr key={item.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                <td className="border border-black p-2 font-bold">
+                  {editingItem === item.id ? (
+                    <input
+                      type="time"
+                      value={item.time}
+                      onChange={(e) => updateItem(item.id, 'time', e.target.value)}
+                      className="w-full px-1 border rounded"
+                    />
+                  ) : (
+                    item.time
+                  )}
+                </td>
+                <td className="border border-black p-2">
+                  {editingItem === item.id ? (
+                    <input
+                      type="text"
+                      value={item.event_name}
+                      onChange={(e) => updateItem(item.id, 'event_name', e.target.value)}
+                      className="w-full px-1 border rounded"
+                    />
+                  ) : (
+                    <strong>{item.event_name}</strong>
+                  )}
+                </td>
+                <td className="border border-black p-2">
+                  {editingItem === item.id ? (
+                    <input
+                      type="text"
+                      value={item.location || ''}
+                      onChange={(e) => updateItem(item.id, 'location', e.target.value)}
+                      className="w-full px-1 border rounded"
+                    />
+                  ) : (
+                    item.location || 'TBD'
+                  )}
+                </td>
+                <td className="border border-black p-2">
+                  {editingItem === item.id ? (
+                    <input
+                      type="text"
+                      value={item.responsible_party || ''}
+                      onChange={(e) => updateItem(item.id, 'responsible_party', e.target.value)}
+                      className="w-full px-1 border rounded"
+                    />
+                  ) : (
+                    item.responsible_party || 'TBD'
+                  )}
+                </td>
+                <td className="border border-black p-2">
+                  {editingItem === item.id ? (
+                    <input
+                      type="text"
+                      value={item.notes || ''}
+                      onChange={(e) => updateItem(item.id, 'notes', e.target.value)}
+                      className="w-full px-1 border rounded"
+                    />
+                  ) : (
+                    <span className="text-sm italic">{item.notes || ''}</span>
+                  )}
+                </td>
+                {editMode && (
+                  <td className="border border-black p-2">
+                    <div className="flex gap-1">
+                      {editingItem === item.id ? (
+                        <button
+                          onClick={() => setEditingItem(null)}
+                          className="px-2 py-1 bg-green-600 text-white rounded text-xs"
+                        >
+                          Done
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setEditingItem(item.id)}
+                          className="px-2 py-1 bg-blue-600 text-white rounded text-xs"
+                        >
+                          Edit
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDeleteItem(item.id)}
+                        className="px-2 py-1 bg-red-600 text-white rounded text-xs"
+                        disabled={loading}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                )}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
       

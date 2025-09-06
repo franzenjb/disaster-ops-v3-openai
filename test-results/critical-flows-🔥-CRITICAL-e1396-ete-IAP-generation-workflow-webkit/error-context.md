@@ -1,0 +1,248 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - heading "FLOCOM - Hurricane Helene and Milton" [level=1] [ref=e7]
+          - paragraph [ref=e8]: "DR 220-25 • Hurricane Response • Operational Period #27"
+        - paragraph [ref=e10]: John Doe • IP GROUP
+      - generic [ref=e11]:
+        - button "IAP Editor" [ref=e12] [cursor=pointer]
+        - button "📄 IAP Viewer" [ref=e13] [cursor=pointer]
+        - button "Facility Manager (Gaps & Assets)" [ref=e14] [cursor=pointer]
+        - button "📊 Tables & Data Hub" [ref=e15] [cursor=pointer]
+        - button "🗺️ Facility Map" [ref=e16] [cursor=pointer]
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - 'heading "Incident Action Plan #27" [level=1] [ref=e23]'
+          - paragraph [ref=e24]: DR DR 220-25 - FLOCOM
+          - paragraph [ref=e25]: "Operational Period: Oct 20, 2024 - 06:00 to Oct 21, 2024 - 05:59"
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - button "Export PDF" [ref=e28] [cursor=pointer]:
+              - generic [ref=e29] [cursor=pointer]:
+                - img [ref=e30] [cursor=pointer]
+                - text: Export PDF
+            - button "Preview PDF" [ref=e32] [cursor=pointer]:
+              - generic [ref=e33] [cursor=pointer]:
+                - img [ref=e34] [cursor=pointer]
+                - text: Preview PDF
+          - generic [ref=e37]:
+            - button "⬇ Expand All" [ref=e38] [cursor=pointer]
+            - button "⬆ Collapse All" [ref=e39] [cursor=pointer]
+          - button "Return to Dashboard" [ref=e40] [cursor=pointer]:
+            - img [ref=e41] [cursor=pointer]
+            - text: Return to Dashboard
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - button "▶ Cover Page & Checklist Pages 1-1 1 page" [ref=e45] [cursor=pointer]:
+            - generic [ref=e46] [cursor=pointer]:
+              - generic [ref=e47] [cursor=pointer]: ▶
+              - generic [ref=e48] [cursor=pointer]:
+                - generic [ref=e49] [cursor=pointer]: Cover Page & Checklist
+                - generic [ref=e50] [cursor=pointer]: Pages 1-1
+            - generic [ref=e51] [cursor=pointer]: 1 page
+          - generic [ref=e54]:
+            - table [ref=e55]:
+              - rowgroup [ref=e56]:
+                - 'row "Incident Name: FLOCOM DR Number DR 220-25 Operational Period Oct 20, 2024 - 06:00 to Oct 21, 2024 - 05:59" [ref=e57]':
+                  - 'cell "Incident Name: FLOCOM" [ref=e58]':
+                    - generic [ref=e59]: "Incident Name:"
+                    - generic [ref=e60]: FLOCOM
+                  - cell "DR Number DR 220-25" [ref=e61]:
+                    - generic [ref=e62]: DR Number
+                    - generic [ref=e63]: DR 220-25
+                  - cell "Operational Period Oct 20, 2024 - 06:00 to Oct 21, 2024 - 05:59" [ref=e64]:
+                    - generic [ref=e65]: Operational Period
+                    - generic [ref=e66]: Oct 20, 2024 - 06:00 to Oct 21, 2024 - 05:59
+            - heading "Incident Action Plan [#27]" [level=1] [ref=e68]
+            - generic [ref=e71]:
+              - generic [ref=e72]: Operation Photo
+              - generic [ref=e73] [cursor=pointer]: Upload Photo
+            - table [ref=e75]:
+              - rowgroup [ref=e76]:
+                - 'row "Documents Included: Y/N Director''s Intent/Message Y Incident Priorities and Objectives Y Status of Previous Operating Period''s Objectives Y Contact Roster DRO HQ Y Incident Open Action Tracker Y Documents Included: Y/N Incident Organization Chart Y Work Assignment Y Work Sites Y Daily Schedule Y General Message Y" [ref=e77]':
+                  - 'cell "Documents Included: Y/N Director''s Intent/Message Y Incident Priorities and Objectives Y Status of Previous Operating Period''s Objectives Y Contact Roster DRO HQ Y Incident Open Action Tracker Y" [ref=e78]':
+                    - table [ref=e79]:
+                      - rowgroup [ref=e80]:
+                        - 'row "Documents Included: Y/N" [ref=e81]':
+                          - cell "Documents Included:" [ref=e82]
+                          - cell "Y/N" [ref=e83]
+                      - rowgroup [ref=e84]:
+                        - row "Director's Intent/Message Y" [ref=e85]:
+                          - cell "Director's Intent/Message" [ref=e86]
+                          - cell "Y" [ref=e87]
+                        - row "Incident Priorities and Objectives Y" [ref=e88]:
+                          - cell "Incident Priorities and Objectives" [ref=e89]
+                          - cell "Y" [ref=e90]
+                        - row "Status of Previous Operating Period's Objectives Y" [ref=e91]:
+                          - cell "Status of Previous Operating Period's Objectives" [ref=e92]
+                          - cell "Y" [ref=e93]
+                        - row "Contact Roster DRO HQ Y" [ref=e94]:
+                          - cell "Contact Roster DRO HQ" [ref=e95]
+                          - cell "Y" [ref=e96]
+                        - row "Incident Open Action Tracker Y" [ref=e97]:
+                          - cell "Incident Open Action Tracker" [ref=e98]
+                          - cell "Y" [ref=e99]
+                  - 'cell "Documents Included: Y/N Incident Organization Chart Y Work Assignment Y Work Sites Y Daily Schedule Y General Message Y" [ref=e100]':
+                    - table [ref=e101]:
+                      - rowgroup [ref=e102]:
+                        - 'row "Documents Included: Y/N" [ref=e103]':
+                          - cell "Documents Included:" [ref=e104]
+                          - cell "Y/N" [ref=e105]
+                      - rowgroup [ref=e106]:
+                        - row "Incident Organization Chart Y" [ref=e107]:
+                          - cell "Incident Organization Chart" [ref=e108]
+                          - cell "Y" [ref=e109]
+                        - row "Work Assignment Y" [ref=e110]:
+                          - cell "Work Assignment" [ref=e111]
+                          - cell "Y" [ref=e112]
+                        - row "Work Sites Y" [ref=e113]:
+                          - cell "Work Sites" [ref=e114]
+                          - cell "Y" [ref=e115]
+                        - row "Daily Schedule Y" [ref=e116]:
+                          - cell "Daily Schedule" [ref=e117]
+                          - cell "Y" [ref=e118]
+                        - row "General Message Y" [ref=e119]:
+                          - cell "General Message" [ref=e120]
+                          - cell "Y" [ref=e121]
+            - table [ref=e122]:
+              - rowgroup [ref=e123]:
+                - 'row "Prepared By: Alyson Gordon Information & Planning Manager Approved By: Betsy Witthohn Job Director" [ref=e124]':
+                  - 'cell "Prepared By: Alyson Gordon Information & Planning Manager" [ref=e125]':
+                    - generic [ref=e126]: "Prepared By:"
+                    - generic [ref=e127]: Alyson Gordon
+                    - generic [ref=e128]: Information & Planning Manager
+                  - 'cell "Approved By: Betsy Witthohn Job Director" [ref=e129]':
+                    - generic [ref=e130]: "Approved By:"
+                    - generic [ref=e131]: Betsy Witthohn
+                    - generic [ref=e132]: Job Director
+        - button "▶ Director's Intent/Message Pages 2-3 2 pages" [ref=e134] [cursor=pointer]:
+          - generic [ref=e135] [cursor=pointer]:
+            - generic [ref=e136] [cursor=pointer]: ▶
+            - generic [ref=e137] [cursor=pointer]:
+              - generic [ref=e138] [cursor=pointer]: Director's Intent/Message
+              - generic [ref=e139] [cursor=pointer]: Pages 2-3
+          - generic [ref=e140] [cursor=pointer]: 2 pages
+        - button "▶ Contact Roster DRO HQ Pages 4-6 3 pages" [ref=e142] [cursor=pointer]:
+          - generic [ref=e143] [cursor=pointer]:
+            - generic [ref=e144] [cursor=pointer]: ▶
+            - generic [ref=e145] [cursor=pointer]:
+              - generic [ref=e146] [cursor=pointer]: Contact Roster DRO HQ
+              - generic [ref=e147] [cursor=pointer]: Pages 4-6
+          - generic [ref=e148] [cursor=pointer]: 3 pages
+        - button "▶ Incident Organization Chart Pages 7-8 2 pages" [ref=e150] [cursor=pointer]:
+          - generic [ref=e151] [cursor=pointer]:
+            - generic [ref=e152] [cursor=pointer]: ▶
+            - generic [ref=e153] [cursor=pointer]:
+              - generic [ref=e154] [cursor=pointer]: Incident Organization Chart
+              - generic [ref=e155] [cursor=pointer]: Pages 7-8
+          - generic [ref=e156] [cursor=pointer]: 2 pages
+        - button "▶ Incident Priorities and Objectives Pages 9-10 2 pages" [ref=e158] [cursor=pointer]:
+          - generic [ref=e159] [cursor=pointer]:
+            - generic [ref=e160] [cursor=pointer]: ▶
+            - generic [ref=e161] [cursor=pointer]:
+              - generic [ref=e162] [cursor=pointer]: Incident Priorities and Objectives
+              - generic [ref=e163] [cursor=pointer]: Pages 9-10
+          - generic [ref=e164] [cursor=pointer]: 2 pages
+        - button "▶ DRO - Sheltering Resources Pages 11-12 2 pages" [ref=e166] [cursor=pointer]:
+          - generic [ref=e167] [cursor=pointer]:
+            - generic [ref=e168] [cursor=pointer]: ▶
+            - generic [ref=e169] [cursor=pointer]:
+              - generic [ref=e170] [cursor=pointer]: DRO - Sheltering Resources
+              - generic [ref=e171] [cursor=pointer]: Pages 11-12
+          - generic [ref=e172] [cursor=pointer]: 2 pages
+        - button "▶ Work Assignments - Feeding Pages 13-15 3 pages" [ref=e174] [cursor=pointer]:
+          - generic [ref=e175] [cursor=pointer]:
+            - generic [ref=e176] [cursor=pointer]: ▶
+            - generic [ref=e177] [cursor=pointer]:
+              - generic [ref=e178] [cursor=pointer]: Work Assignments - Feeding
+              - generic [ref=e179] [cursor=pointer]: Pages 13-15
+          - generic [ref=e180] [cursor=pointer]: 3 pages
+        - button "▶ Work Assignments - Government Operations Pages 23-25 3 pages" [ref=e182] [cursor=pointer]:
+          - generic [ref=e183] [cursor=pointer]:
+            - generic [ref=e184] [cursor=pointer]: ▶
+            - generic [ref=e185] [cursor=pointer]:
+              - generic [ref=e186] [cursor=pointer]: Work Assignments - Government Operations
+              - generic [ref=e187] [cursor=pointer]: Pages 23-25
+          - generic [ref=e188] [cursor=pointer]: 3 pages
+        - button "▶ Work Assignments - Damage Assessment Pages 26-28 3 pages" [ref=e190] [cursor=pointer]:
+          - generic [ref=e191] [cursor=pointer]:
+            - generic [ref=e192] [cursor=pointer]: ▶
+            - generic [ref=e193] [cursor=pointer]:
+              - generic [ref=e194] [cursor=pointer]: Work Assignments - Damage Assessment
+              - generic [ref=e195] [cursor=pointer]: Pages 26-28
+          - generic [ref=e196] [cursor=pointer]: 3 pages
+        - button "▶ Work Assignments - Distribution Pages 29-31 3 pages" [ref=e198] [cursor=pointer]:
+          - generic [ref=e199] [cursor=pointer]:
+            - generic [ref=e200] [cursor=pointer]: ▶
+            - generic [ref=e201] [cursor=pointer]:
+              - generic [ref=e202] [cursor=pointer]: Work Assignments - Distribution
+              - generic [ref=e203] [cursor=pointer]: Pages 29-31
+          - generic [ref=e204] [cursor=pointer]: 3 pages
+        - button "▶ Work Assignments - Individual Disaster Care Pages 32-38 7 pages" [ref=e206] [cursor=pointer]:
+          - generic [ref=e207] [cursor=pointer]:
+            - generic [ref=e208] [cursor=pointer]: ▶
+            - generic [ref=e209] [cursor=pointer]:
+              - generic [ref=e210] [cursor=pointer]: Work Assignments - Individual Disaster Care
+              - generic [ref=e211] [cursor=pointer]: Pages 32-38
+          - generic [ref=e212] [cursor=pointer]: 7 pages
+        - button "▶ Work Sites and Facilities Pages 39-44 6 pages" [ref=e214] [cursor=pointer]:
+          - generic [ref=e215] [cursor=pointer]:
+            - generic [ref=e216] [cursor=pointer]: ▶
+            - generic [ref=e217] [cursor=pointer]:
+              - generic [ref=e218] [cursor=pointer]: Work Sites and Facilities
+              - generic [ref=e219] [cursor=pointer]: Pages 39-44
+          - generic [ref=e220] [cursor=pointer]: 6 pages
+        - button "▶ Daily Schedule Pages 45-48 4 pages" [ref=e222] [cursor=pointer]:
+          - generic [ref=e223] [cursor=pointer]:
+            - generic [ref=e224] [cursor=pointer]: ▶
+            - generic [ref=e225] [cursor=pointer]:
+              - generic [ref=e226] [cursor=pointer]: Daily Schedule
+              - generic [ref=e227] [cursor=pointer]: Pages 45-48
+          - generic [ref=e228] [cursor=pointer]: 4 pages
+        - button "▶ Maps and Geographic Information Pages 49-51 3 pages" [ref=e230] [cursor=pointer]:
+          - generic [ref=e231] [cursor=pointer]:
+            - generic [ref=e232] [cursor=pointer]: ▶
+            - generic [ref=e233] [cursor=pointer]:
+              - generic [ref=e234] [cursor=pointer]: Maps and Geographic Information
+              - generic [ref=e235] [cursor=pointer]: Pages 49-51
+          - generic [ref=e236] [cursor=pointer]: 3 pages
+        - button "▶ Appendices and References Pages 52-53 2 pages" [ref=e238] [cursor=pointer]:
+          - generic [ref=e239] [cursor=pointer]:
+            - generic [ref=e240] [cursor=pointer]: ▶
+            - generic [ref=e241] [cursor=pointer]:
+              - generic [ref=e242] [cursor=pointer]: Appendices and References
+              - generic [ref=e243] [cursor=pointer]: Pages 52-53
+          - generic [ref=e244] [cursor=pointer]: 2 pages
+      - generic [ref=e245]:
+        - generic [ref=e246]:
+          - button "Export to PDF" [ref=e247] [cursor=pointer]:
+            - img [ref=e248] [cursor=pointer]
+            - text: Export to PDF
+          - button "Print" [ref=e250] [cursor=pointer]:
+            - img [ref=e251] [cursor=pointer]
+            - text: Print
+          - button "Email" [ref=e253] [cursor=pointer]:
+            - img [ref=e254] [cursor=pointer]
+            - text: Email
+        - generic [ref=e256]: "Last Updated: 9/6/2025, 9:28:18 AM"
+  - generic [ref=e261] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e262] [cursor=pointer]:
+      - img [ref=e263] [cursor=pointer]
+    - generic [ref=e268] [cursor=pointer]:
+      - button "Open issues overlay" [ref=e269] [cursor=pointer]:
+        - generic [ref=e270] [cursor=pointer]:
+          - generic [ref=e271] [cursor=pointer]: "1"
+          - generic [ref=e272] [cursor=pointer]: "2"
+        - generic [ref=e273] [cursor=pointer]:
+          - text: Issue
+          - generic [ref=e274] [cursor=pointer]: s
+      - button "Collapse issues badge" [ref=e275] [cursor=pointer]:
+        - img [ref=e276] [cursor=pointer]
+  - alert [ref=e278]
+```

@@ -11,7 +11,8 @@ import ReactFlow, {
   Position,
   MarkerType,
   ConnectionMode,
-  Panel
+  Panel,
+  Handle
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { simpleStore } from '@/lib/simple-store';
@@ -26,8 +27,8 @@ interface RosterPosition {
   reportsTo?: string;
 }
 
-// Custom node component
-const CustomNode = ({ data }: { data: any }) => {
+// Custom node component defined outside to prevent re-creation
+const CustomNode = React.memo(({ data }: { data: any }) => {
   const bgColor = 
     data.category === 'Command' ? 'bg-gradient-to-br from-red-100 to-red-200 border-red-600' :
     data.category === 'Operations' ? 'bg-gradient-to-br from-blue-100 to-blue-200 border-blue-600' :
@@ -36,7 +37,13 @@ const CustomNode = ({ data }: { data: any }) => {
     'bg-gradient-to-br from-gray-100 to-gray-200 border-gray-600';
   
   return (
-    <div className={`px-4 py-3 shadow-xl rounded-lg border-2 ${bgColor} min-w-[200px] max-w-[250px]`}>
+    <div className={`relative px-4 py-3 shadow-xl rounded-lg border-2 ${bgColor} min-w-[200px] max-w-[250px]`}>
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="top"
+        style={{ background: '#555', width: 8, height: 8 }}
+      />
       <div className="text-xs font-bold text-gray-700 uppercase tracking-wide">{data.title}</div>
       {data.name && (
         <>
@@ -61,15 +68,24 @@ const CustomNode = ({ data }: { data: any }) => {
           )}
         </>
       )}
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="bottom"
+        style={{ background: '#555', width: 8, height: 8 }}
+      />
     </div>
   );
+});
+
+CustomNode.displayName = 'CustomNode';
+
+// Define nodeTypes outside component to prevent re-creation
+const nodeTypes = {
+  custom: CustomNode,
 };
 
 export function OrgChartFlow() {
-  // Memoize nodeTypes to prevent ReactFlow warnings
-  const nodeTypes = useMemo(() => ({
-    custom: CustomNode,
-  }), []);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -140,12 +156,14 @@ export function OrgChartFlow() {
           }
         });
         
-        // Create edges
+        // Create edges with proper handle IDs
         if (pos.reportsTo && filledPositions.find(p => p.id === pos.reportsTo)) {
           flowEdges.push({
             id: `${pos.reportsTo}-${pos.id}`,
             source: pos.reportsTo,
             target: pos.id,
+            sourceHandle: 'bottom',
+            targetHandle: 'top',
             type: 'smoothstep',
             animated: false,
             style: { stroke: '#9ca3af', strokeWidth: 2 },
@@ -257,13 +275,13 @@ export function OrgChartFlow() {
     ];
     
     const sampleEdges: Edge[] = [
-      { id: 'e1-2', source: '1', target: '2', type: 'smoothstep', animated: false },
-      { id: 'e1-3', source: '1', target: '3', type: 'smoothstep', animated: false },
-      { id: 'e1-4', source: '1', target: '4', type: 'smoothstep', animated: false },
-      { id: 'e2-5', source: '2', target: '5', type: 'smoothstep', animated: false },
-      { id: 'e2-6', source: '2', target: '6', type: 'smoothstep', animated: false },
-      { id: 'e4-7', source: '4', target: '7', type: 'smoothstep', animated: false },
-      { id: 'e4-8', source: '4', target: '8', type: 'smoothstep', animated: false },
+      { id: 'e1-2', source: '1', target: '2', sourceHandle: 'bottom', targetHandle: 'top', type: 'smoothstep', animated: false },
+      { id: 'e1-3', source: '1', target: '3', sourceHandle: 'bottom', targetHandle: 'top', type: 'smoothstep', animated: false },
+      { id: 'e1-4', source: '1', target: '4', sourceHandle: 'bottom', targetHandle: 'top', type: 'smoothstep', animated: false },
+      { id: 'e2-5', source: '2', target: '5', sourceHandle: 'bottom', targetHandle: 'top', type: 'smoothstep', animated: false },
+      { id: 'e2-6', source: '2', target: '6', sourceHandle: 'bottom', targetHandle: 'top', type: 'smoothstep', animated: false },
+      { id: 'e4-7', source: '4', target: '7', sourceHandle: 'bottom', targetHandle: 'top', type: 'smoothstep', animated: false },
+      { id: 'e4-8', source: '4', target: '8', sourceHandle: 'bottom', targetHandle: 'top', type: 'smoothstep', animated: false },
     ];
     
     setNodes(sampleNodes);
@@ -301,7 +319,7 @@ export function OrgChartFlow() {
       </div>
       
       {/* ReactFlow Chart */}
-      <div style={{ width: '100%', height: '600px' }} className="border-2 border-gray-300 rounded-lg bg-gray-50">
+      <div className="border-2 border-gray-300 rounded-lg bg-gray-50" style={{ width: '100%', height: '600px', position: 'relative' }}>
         <ReactFlow
           nodes={nodes}
           edges={edges}

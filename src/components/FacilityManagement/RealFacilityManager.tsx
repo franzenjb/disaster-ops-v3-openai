@@ -14,11 +14,14 @@ interface FacilityManagementProps {
   onNavigate?: (view: string) => void;
 }
 
+type DisciplineType = 'sheltering' | 'feeding' | 'government' | 'damage_assessment' | 'distribution' | 'individual_care';
+
 export function RealFacilityManager({ onNavigate }: FacilityManagementProps) {
   const [selectedFacility, setSelectedFacility] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'sheltering' | 'feeding'>('sheltering');
+  const [activeTab, setActiveTab] = useState<DisciplineType>('sheltering');
   const [customFacilities, setCustomFacilities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showDisciplineDropdown, setShowDisciplineDropdown] = useState(false);
 
   useEffect(() => {
     // Load facilities from database
@@ -35,18 +38,58 @@ export function RealFacilityManager({ onNavigate }: FacilityManagementProps) {
     loadFacilities();
   }, []);
 
+  // Get discipline display name
+  const disciplineNames: Record<DisciplineType, string> = {
+    sheltering: 'Sheltering',
+    feeding: 'Feeding',
+    government: 'Government Operations',
+    damage_assessment: 'Damage Assessment',
+    distribution: 'Distribution',
+    individual_care: 'Individual Disaster Care'
+  };
+
   // Combine V27 data with custom facilities from database
-  const baseFacilities = activeTab === 'sheltering' 
-    ? V27_IAP_DATA.shelteringFacilities 
-    : V27_IAP_DATA.feedingFacilities;
+  let baseFacilities: any[] = [];
+  switch (activeTab) {
+    case 'sheltering':
+      baseFacilities = V27_IAP_DATA.shelteringFacilities;
+      break;
+    case 'feeding':
+      baseFacilities = V27_IAP_DATA.feedingFacilities;
+      break;
+    case 'government':
+      baseFacilities = V27_IAP_DATA.governmentFacilities || [];
+      break;
+    case 'damage_assessment':
+      baseFacilities = V27_IAP_DATA.damageAssessmentFacilities || [];
+      break;
+    case 'distribution':
+      baseFacilities = V27_IAP_DATA.distributionFacilities || [];
+      break;
+    case 'individual_care':
+      baseFacilities = V27_IAP_DATA.individualCareFacilities || [];
+      break;
+  }
     
   // Filter custom facilities by type
   const filteredCustom = customFacilities.filter(f => {
-    if (activeTab === 'sheltering') {
-      return f.type === 'shelter' || f.type === 'Standard Shelter';
+    switch (activeTab) {
+      case 'sheltering':
+        return f.type === 'shelter' || f.type === 'Standard Shelter';
+      case 'feeding':
+        return f.type === 'kitchen' || f.type === 'Fixed Feeding Site' || 
+               f.type === 'erv' || f.type === 'Mobile Feeding';
+      case 'government':
+        return f.type === 'eoc' || f.type === 'government';
+      case 'damage_assessment':
+        return f.type === 'assessment' || f.type === 'damage_assessment';
+      case 'distribution':
+        return f.type === 'distribution' || f.type === 'warehouse';
+      case 'individual_care':
+        return f.type === 'reception_center' || f.type === 'individual_care';
+      default:
+        return false;
     }
-    return f.type === 'kitchen' || f.type === 'Fixed Feeding Site' || 
-           f.type === 'erv' || f.type === 'Mobile Feeding';
   });
   
   const facilities = [...baseFacilities, ...filteredCustom];
@@ -69,30 +112,46 @@ export function RealFacilityManager({ onNavigate }: FacilityManagementProps) {
           </p>
         </div>
 
-        {/* Service Line Tabs */}
-        <div className="border-b border-gray-200 mb-6">
-          <nav className="-mb-px flex space-x-8">
+        {/* Service Line Dropdown Selector */}
+        <div className="border-b border-gray-200 mb-6 pb-4">
+          <div className="relative inline-block">
             <button
-              onClick={() => setActiveTab('sheltering')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'sheltering'
-                  ? 'border-red-600 text-red-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              onClick={() => setShowDisciplineDropdown(!showDisciplineDropdown)}
+              className="flex items-center justify-between px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 min-w-[250px]"
             >
-              Sheltering ({V27_IAP_DATA.shelteringFacilities.length} facilities)
+              <span className="font-medium">{disciplineNames[activeTab]}</span>
+              <svg className="ml-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
             </button>
-            <button
-              onClick={() => setActiveTab('feeding')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'feeding'
-                  ? 'border-red-600 text-red-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Feeding ({V27_IAP_DATA.feedingFacilities.length} facilities)
-            </button>
-          </nav>
+            
+            {showDisciplineDropdown && (
+              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg">
+                {Object.entries(disciplineNames).map(([key, name]) => (
+                  <button
+                    key={key}
+                    onClick={() => {
+                      setActiveTab(key as DisciplineType);
+                      setShowDisciplineDropdown(false);
+                      setSelectedFacility(null);
+                    }}
+                    className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
+                      activeTab === key ? 'bg-red-50 text-red-600' : 'text-gray-700'
+                    }`}
+                  >
+                    {name}
+                    <span className="ml-2 text-sm text-gray-500">
+                      ({key === 'sheltering' ? V27_IAP_DATA.shelteringFacilities.length :
+                        key === 'feeding' ? V27_IAP_DATA.feedingFacilities.length : 0} facilities)
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <span className="ml-4 text-sm text-gray-600">
+            {facilities.length} total facilities in {disciplineNames[activeTab]}
+          </span>
         </div>
 
         {/* Two-column layout */}

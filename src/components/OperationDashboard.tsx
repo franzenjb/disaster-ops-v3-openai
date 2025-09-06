@@ -7,8 +7,10 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { IAPDocument } from './IAP/IAPDocument';
+import { ShelterConsole } from './Disciplines/ShelterConsole';
+import { EnhancedFacilityManager } from './FacilityManagement/EnhancedFacilityManager';
 import { User, Operation } from '../types';
 import { V27_IAP_DATA } from '../data/v27-iap-data';
 
@@ -17,7 +19,11 @@ interface OperationDashboardProps {
   user?: User;
 }
 
+type ViewType = 'iap' | 'shelter-console' | 'facility-manager';
+
 export function OperationDashboard({ operation, user }: OperationDashboardProps) {
+  const [currentView, setCurrentView] = useState<ViewType>('iap');
+  
   // Mock user if not provided
   const mockUser: User = user || {
     id: 'user-1',
@@ -37,10 +43,9 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
     }
   };
 
-  // Go directly to IAP document view
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Minimal Header */}
+      {/* Header with Navigation */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
@@ -59,12 +64,50 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
               </p>
             </div>
           </div>
+          
+          {/* Navigation Tabs */}
+          <div className="mt-4 flex space-x-4 border-t pt-3">
+            <button
+              onClick={() => setCurrentView('iap')}
+              className={`px-4 py-2 rounded-md font-medium ${
+                currentView === 'iap'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              IAP Document
+            </button>
+            <button
+              onClick={() => setCurrentView('facility-manager')}
+              className={`px-4 py-2 rounded-md font-medium ${
+                currentView === 'facility-manager'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Facility Manager (Gaps & Assets)
+            </button>
+            <button
+              onClick={() => setCurrentView('shelter-console')}
+              className={`px-4 py-2 rounded-md font-medium ${
+                currentView === 'shelter-console'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Shelter Work Assignments
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* IAP Document takes up the rest of the screen */}
+      {/* Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <IAPDocument />
+        {currentView === 'iap' && <IAPDocument />}
+        {currentView === 'facility-manager' && <EnhancedFacilityManager />}
+        {currentView === 'shelter-console' && (
+          <ShelterConsole onNavigate={(view) => setCurrentView(view as ViewType)} />
+        )}
       </div>
     </div>
   );

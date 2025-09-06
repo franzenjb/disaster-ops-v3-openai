@@ -43,16 +43,16 @@ export function WorkSitesTable() {
         name: facility.name,
         type: 'Shelter',
         address: facility.address || '',
-        city: facility.city || '',
+        city: '',  // Not in sheltering data
         state: 'FL',
-        zip: facility.zip || '',
+        zip: '',  // Not in sheltering data
         county: facility.county || '',
-        contact: facility.manager || '',
-        phone: facility.managerPhone || '',
+        contact: '',  // Not in sheltering data
+        phone: '',  // Not in sheltering data
         capacity: typeof facility.capacity === 'object' ? facility.capacity.maximum : facility.capacity,
         currentOccupancy: typeof facility.capacity === 'object' ? facility.capacity.current : 0,
-        status: facility.status || 'Operational',
-        notes: facility.notes || '',
+        status: 'Operational',  // Default status
+        notes: '',  // Not in sheltering data
         source: 'Sheltering'
       };
       locationMap.set(`${facility.name}-${facility.county}`, site);
@@ -65,14 +65,14 @@ export function WorkSitesTable() {
         name: facility.name,
         type: facility.type || 'Feeding',
         address: facility.address || '',
-        city: facility.city || '',
+        city: '',  // Not in feeding data
         state: 'FL',
-        zip: facility.zip || '',
+        zip: '',  // Not in feeding data
         county: facility.county || '',
-        contact: facility.manager || '',
-        phone: facility.managerPhone || '',
+        contact: '',  // Not in feeding data
+        phone: '',  // Not in feeding data
         capacity: facility.mealsPerDay,
-        status: facility.status || 'Operational',
+        status: 'Operational',  // Default status
         notes: `${facility.mealsPerDay} meals/day`,
         source: 'Feeding'
       };

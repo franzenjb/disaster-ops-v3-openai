@@ -29,8 +29,8 @@ const ROSTER_STRUCTURE: RosterPosition[] = [
   { id: 'line-dst', category: '24 Hour Lines', title: '24 Hour / DST Helpline' },
   
   // Command
-  { id: 'cmd-dro', category: 'Command', title: 'DRO Director', reportsTo: null },
-  { id: 'cmd-dro2', category: 'Command', title: 'DRO Director', reportsTo: null },
+  { id: 'cmd-dro', category: 'Command', title: 'DRO Director', reportsTo: undefined },
+  { id: 'cmd-dro2', category: 'Command', title: 'DRO Director', reportsTo: undefined },
   { id: 'cmd-rcco', category: 'Command', title: 'RCCO', reportsTo: 'cmd-dro' },
   { id: 'cmd-cos', category: 'Command', title: 'Chief of Staff', reportsTo: 'cmd-dro' },
   { id: 'cmd-seoc', category: 'Command', title: 'SEOC Principal', reportsTo: 'cmd-dro' },

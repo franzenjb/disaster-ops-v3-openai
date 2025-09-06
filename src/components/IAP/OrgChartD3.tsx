@@ -82,8 +82,9 @@ export function OrgChartD3() {
     // Add orphans to root if they exist
     if (root && orphans.length > 0) {
       orphans.forEach(orphan => {
-        if (!root.children?.find(c => c.id === orphan.id)) {
-          root.children?.push(orphan);
+        if (!root!.children?.find(c => c.id === orphan.id)) {
+          if (!root!.children) root!.children = [];
+          root!.children.push(orphan);
         }
       });
     }

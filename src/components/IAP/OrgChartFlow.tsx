@@ -313,7 +313,7 @@ export function OrgChartFlow() {
           attributionPosition="bottom-left"
         >
           <Controls />
-          <Background variant="dots" gap={12} size={1} />
+          <Background gap={12} size={1} />
           <Panel position="top-right" className="bg-white p-2 rounded shadow">
             <div className="text-xs space-y-1">
               <div className="flex items-center gap-2">

@@ -34,7 +34,13 @@ export function PrioritiesObjectives() {
         { id: '3', text: 'Property/Environmental Conservation - Support recovery efforts', order: 3 }
       ]);
     } else {
-      setPriorities(savedPriorities);
+      // Convert string[] to Priority[]
+      const priorityObjects = savedPriorities.map((text: string, index: number) => ({
+        id: String(index + 1),
+        text: text,
+        order: index + 1
+      }));
+      setPriorities(priorityObjects);
     }
     
     if (!savedObjectives || savedObjectives.length === 0) {
@@ -46,16 +52,26 @@ export function PrioritiesObjectives() {
         { id: '5', text: 'Coordinate with state/federal partners on resource requests', order: 5 }
       ]);
     } else {
-      setObjectives(savedObjectives);
+      // Convert string[] to Objective[]
+      const objectiveObjects = savedObjectives.map((text: string, index: number) => ({
+        id: String(index + 1),
+        text: text,
+        order: index + 1
+      }));
+      setObjectives(objectiveObjects);
     }
   }, []);
   
   const handleSave = () => {
     if (simpleStore.savePriorities) {
-      simpleStore.savePriorities(priorities);
+      // Convert Priority[] back to string[]
+      const priorityTexts = priorities.map(p => p.text);
+      simpleStore.savePriorities(priorityTexts);
     }
     if (simpleStore.saveObjectives) {
-      simpleStore.saveObjectives(objectives);
+      // Convert Objective[] back to string[]
+      const objectiveTexts = objectives.map(o => o.text);
+      simpleStore.saveObjectives(objectiveTexts);
     }
     setEditMode(false);
     setEditingPriority(null);

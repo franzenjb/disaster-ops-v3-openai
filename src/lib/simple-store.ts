@@ -159,6 +159,66 @@ class SimpleStore {
     const data = this.getData();
     return data.contactRoster || [];
   }
+  
+  // Appendices methods
+  saveAppendices(appendices: any[]): void {
+    const data = this.getData();
+    data.appendices = appendices;
+    this.saveData(data);
+  }
+  
+  getAppendices(): any[] {
+    const data = this.getData();
+    return data.appendices || [];
+  }
+  
+  // References methods
+  saveReferences(references: any[]): void {
+    const data = this.getData();
+    data.references = references;
+    this.saveData(data);
+  }
+  
+  getReferences(): any[] {
+    const data = this.getData();
+    return data.references || [];
+  }
+  
+  // Daily Schedule methods
+  saveDailySchedule(schedule: any[]): void {
+    const data = this.getData();
+    data.dailySchedule = schedule;
+    this.saveData(data);
+  }
+  
+  getDailySchedule(): any[] {
+    const data = this.getData();
+    return data.dailySchedule || [];
+  }
+  
+  // Priorities methods
+  savePriorities(priorities: string[]): void {
+    const data = this.getData();
+    data.priorities = priorities;
+    this.saveData(data);
+  }
+  
+  getPriorities(): string[] {
+    const data = this.getData();
+    return data.priorities || [];
+  }
+  
+  // Objectives methods
+  saveObjectives(objectives: string[]): void {
+    const data = this.getData();
+    data.objectives = objectives;
+    this.saveData(data);
+  }
+  
+  getObjectives(): string[] {
+    const data = this.getData();
+    return data.objectives || [];
+  }
 }
 
 // Export singleton instance

@@ -157,6 +157,100 @@ export const V27_IAP_DATA = {
     ]
   },
 
+  // Government Operations Facilities
+  governmentFacilities: [
+    {
+      id: 'gov-1',
+      name: 'County EOC Liaison',
+      type: 'Government Liaison',
+      address: '601 E Kennedy Blvd, Tampa, FL 33602',
+      county: 'Hillsborough',
+      personnel: {
+        required: 2,
+        have: 2,
+        gap: 0
+      },
+      positions: [
+        { code: 'GOV-LN', title: 'Government Liaison', required: 2, have: 2, gap: 0 }
+      ],
+      assets: []
+    }
+  ],
+
+  // Damage Assessment Facilities
+  damageAssessmentFacilities: [
+    {
+      id: 'da-1',
+      name: 'Damage Assessment Team Base',
+      type: 'Assessment Center',
+      address: '501 E Kennedy Blvd, Tampa, FL 33602',
+      county: 'Hillsborough',
+      personnel: {
+        required: 4,
+        have: 3,
+        gap: 1
+      },
+      positions: [
+        { code: 'DA-MN', title: 'DA Manager', required: 1, have: 1, gap: 0 },
+        { code: 'DA-TM', title: 'DA Team Member', required: 3, have: 2, gap: 1 }
+      ],
+      assets: [
+        { type: 'Tablets', unit: 'each', required: 4, have: 4, gap: 0 },
+        { type: 'Vehicles', unit: 'each', required: 2, have: 2, gap: 0 }
+      ]
+    }
+  ],
+
+  // Distribution Facilities
+  distributionFacilities: [
+    {
+      id: 'dist-1',
+      name: 'Central Distribution Center',
+      type: 'Distribution Center',
+      address: '701 N Florida Ave, Tampa, FL 33602',
+      county: 'Hillsborough',
+      itemsPerDay: 5000,
+      personnel: {
+        required: 6,
+        have: 5,
+        gap: 1
+      },
+      positions: [
+        { code: 'DIST-MN', title: 'Distribution Manager', required: 1, have: 1, gap: 0 },
+        { code: 'DIST-TM', title: 'Distribution Team', required: 5, have: 4, gap: 1 }
+      ],
+      assets: [
+        { type: 'Box Trucks', unit: 'each', required: 3, have: 3, gap: 0 },
+        { type: 'Pallets', unit: 'each', required: 50, have: 45, gap: 5 }
+      ]
+    }
+  ],
+
+  // Individual Disaster Care Facilities
+  individualCareFacilities: [
+    {
+      id: 'idc-1',
+      name: 'Client Services Center',
+      type: 'Service Center',
+      address: '801 N Tampa St, Tampa, FL 33602',
+      county: 'Hillsborough',
+      clientsPerDay: 150,
+      personnel: {
+        required: 8,
+        have: 7,
+        gap: 1
+      },
+      positions: [
+        { code: 'IDC-MN', title: 'IDC Manager', required: 1, have: 1, gap: 0 },
+        { code: 'IDC-CW', title: 'Case Worker', required: 7, have: 6, gap: 1 }
+      ],
+      assets: [
+        { type: 'Workstations', unit: 'each', required: 8, have: 8, gap: 0 },
+        { type: 'Client Forms', unit: 'sets', required: 200, have: 180, gap: 20 }
+      ]
+    }
+  ],
+
   // From Pages 39-44: Work Sites
   workSites: [
     {

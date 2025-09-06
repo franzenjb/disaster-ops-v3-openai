@@ -9,7 +9,6 @@
 
 import React, { useState } from 'react';
 import { IAPDocument } from './IAP/IAPDocument';
-import { ShelterConsole } from './Disciplines/ShelterConsole';
 import { EnhancedFacilityManager } from './FacilityManagement/EnhancedFacilityManager';
 import { User, Operation } from '../types';
 import { V27_IAP_DATA } from '../data/v27-iap-data';
@@ -19,7 +18,7 @@ interface OperationDashboardProps {
   user?: User;
 }
 
-type ViewType = 'iap' | 'shelter-console' | 'facility-manager';
+type ViewType = 'iap' | 'facility-manager';
 
 export function OperationDashboard({ operation, user }: OperationDashboardProps) {
   const [currentView, setCurrentView] = useState<ViewType>('iap');
@@ -87,16 +86,6 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
             >
               Facility Manager (Gaps & Assets)
             </button>
-            <button
-              onClick={() => setCurrentView('shelter-console')}
-              className={`px-4 py-2 rounded-md font-medium ${
-                currentView === 'shelter-console'
-                  ? 'bg-red-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Shelter Work Assignments
-            </button>
           </div>
         </div>
       </div>
@@ -105,9 +94,6 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {currentView === 'iap' && <IAPDocument />}
         {currentView === 'facility-manager' && <EnhancedFacilityManager />}
-        {currentView === 'shelter-console' && (
-          <ShelterConsole onNavigate={(view) => setCurrentView(view as ViewType)} />
-        )}
       </div>
     </div>
   );

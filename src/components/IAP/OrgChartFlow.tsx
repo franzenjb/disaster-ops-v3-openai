@@ -135,7 +135,7 @@ export function OrgChartFlow() {
     // Create nodes
     const flowNodes: Node[] = [];
     const flowEdges: Edge[] = [];
-    let yPosition = 50;
+    const yPosition = 50;
     
     Object.entries(levels).forEach(([level, positions]) => {
       const levelNum = parseInt(level);

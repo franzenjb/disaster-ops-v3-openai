@@ -12,8 +12,8 @@ const nextConfig = {
   // Only use export and basePath for production GitHub Pages deployment
   ...(process.env.NODE_ENV === 'production' ? {
     output: 'export',
-    basePath: '/disaster-ops-v3',
-    assetPrefix: '/disaster-ops-v3/',
+    basePath: '/IAP-Master-Project',
+    assetPrefix: '/IAP-Master-Project/',
   } : {}),
   images: {
     domains: ['localhost'],

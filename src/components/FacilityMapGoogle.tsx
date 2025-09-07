@@ -110,7 +110,6 @@ export function FacilityMapGoogle() {
             scale: 10
           }
         });
-      }
 
       const infoWindow = new window.google.maps.InfoWindow({
         content: `

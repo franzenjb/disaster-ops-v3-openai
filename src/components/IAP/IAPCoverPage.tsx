@@ -50,6 +50,35 @@ export function IAPCoverPage({
   const imgRef = useRef<HTMLImageElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Function to scroll to a specific section in the IAP document
+  const scrollToSection = (sectionId: string) => {
+    // First try to find the element in the current document
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    
+    // If not found, try to expand the section and scroll to it
+    // This works with the accordion structure in IAPDocument
+    const sectionButton = document.querySelector(`[data-section="${sectionId}"]`);
+    if (sectionButton) {
+      (sectionButton as HTMLElement).click();
+      setTimeout(() => {
+        const expandedElement = document.getElementById(sectionId);
+        if (expandedElement) {
+          expandedElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    } else {
+      // Fallback: try to trigger section expansion via parent component
+      console.log(`Navigating to section: ${sectionId}`);
+      // You could emit a custom event here that the parent IAPDocument listens to
+      const event = new CustomEvent('navigateToSection', { detail: sectionId });
+      window.dispatchEvent(event);
+    }
+  };
+
   const [checklist] = useState({
     directorsIntent: true,
     incidentPriorities: true,
@@ -261,91 +290,160 @@ export function IAPCoverPage({
 
       {/* Document Checklist */}
       <div className="mb-6">
-        <table className="w-full">
-          <tbody>
-            <tr>
-            <td className="w-1/2 pr-4">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-200">
-                    <td className="p-2 font-bold" colSpan={2}>Documents Included:</td>
-                    <td className="p-2 font-bold text-center">Y/N</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colSpan={2} className="p-1 underline text-blue-600">Director's Intent/Message</td>
-                    <td className="p-1 text-center">{checklist.directorsIntent ? 'Y' : 'N'}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2} className="p-1 underline text-blue-600">Incident Priorities and Objectives</td>
-                    <td className="p-1 text-center">{checklist.incidentPriorities ? 'Y' : 'N'}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2} className="p-1 underline text-blue-600">Status of Previous Operating Period's Objectives</td>
-                    <td className="p-1 text-center">{checklist.statusOfPrevious ? 'Y' : 'N'}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2} className="p-1 underline text-blue-600">Contact Roster DRO HQ</td>
-                    <td className="p-1 text-center">{checklist.contactRoster ? 'Y' : 'N'}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2} className="p-1 underline text-blue-600">Incident Open Action Tracker</td>
-                    <td className="p-1 text-center">{checklist.incidentOpenAction ? 'Y' : 'N'}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-            <td className="w-1/2 pl-4">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-200">
-                    <td className="p-2 font-bold" colSpan={2}>Documents Included:</td>
-                    <td className="p-2 font-bold text-center">Y/N</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colSpan={2} className="p-1 underline text-blue-600">Incident Organization Chart</td>
-                    <td className="p-1 text-center">{checklist.incidentOrgChart ? 'Y' : 'N'}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2} className="p-1 underline text-blue-600">Work Assignment</td>
-                    <td className="p-1 text-center">{checklist.workAssignment ? 'Y' : 'N'}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2} className="p-1 underline text-blue-600">Work Sites</td>
-                    <td className="p-1 text-center">{checklist.workSites ? 'Y' : 'N'}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2} className="p-1 underline text-blue-600">Daily Schedule</td>
-                    <td className="p-1 text-center">{checklist.dailySchedule ? 'Y' : 'N'}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2} className="p-1 underline text-blue-600">General Message</td>
-                    <td className="p-1 text-center">{checklist.generalMessage ? 'Y' : 'N'}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Left Column */}
+          <div>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-200">
+                  <td className="p-2 font-bold border">Documents Included:</td>
+                  <td className="p-2 font-bold text-center border w-16">Y/N</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="p-1 border">
+                    <button 
+                      onClick={() => scrollToSection('directors-message')}
+                      className="underline text-blue-600 hover:text-blue-800 text-left w-full"
+                    >
+                      Director's Intent/Message
+                    </button>
+                  </td>
+                  <td className="p-1 text-center border">{checklist.directorsIntent ? 'Y' : 'N'}</td>
+                </tr>
+                <tr>
+                  <td className="p-1 border">
+                    <button 
+                      onClick={() => scrollToSection('priorities')}
+                      className="underline text-blue-600 hover:text-blue-800 text-left w-full"
+                    >
+                      Incident Priorities and Objectives
+                    </button>
+                  </td>
+                  <td className="p-1 text-center border">{checklist.incidentPriorities ? 'Y' : 'N'}</td>
+                </tr>
+                <tr>
+                  <td className="p-1 border">
+                    <button 
+                      onClick={() => scrollToSection('priorities')}
+                      className="underline text-blue-600 hover:text-blue-800 text-left w-full"
+                    >
+                      Status of Previous Operating Period's Objectives
+                    </button>
+                  </td>
+                  <td className="p-1 text-center border">{checklist.statusOfPrevious ? 'Y' : 'N'}</td>
+                </tr>
+                <tr>
+                  <td className="p-1 border">
+                    <button 
+                      onClick={() => scrollToSection('contact-roster')}
+                      className="underline text-blue-600 hover:text-blue-800 text-left w-full"
+                    >
+                      Contact Roster DRO HQ
+                    </button>
+                  </td>
+                  <td className="p-1 text-center border">{checklist.contactRoster ? 'Y' : 'N'}</td>
+                </tr>
+                <tr>
+                  <td className="p-1 border">
+                    <button 
+                      onClick={() => scrollToSection('priorities')}
+                      className="underline text-blue-600 hover:text-blue-800 text-left w-full"
+                    >
+                      Incident Open Action Tracker
+                    </button>
+                  </td>
+                  <td className="p-1 text-center border">{checklist.incidentOpenAction ? 'Y' : 'N'}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Right Column */}
+          <div>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-200">
+                  <td className="p-2 font-bold border">Documents Included:</td>
+                  <td className="p-2 font-bold text-center border w-16">Y/N</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="p-1 border">
+                    <button 
+                      onClick={() => scrollToSection('org-chart')}
+                      className="underline text-blue-600 hover:text-blue-800 text-left w-full"
+                    >
+                      Incident Organization Chart
+                    </button>
+                  </td>
+                  <td className="p-1 text-center border">{checklist.incidentOrgChart ? 'Y' : 'N'}</td>
+                </tr>
+                <tr>
+                  <td className="p-1 border">
+                    <button 
+                      onClick={() => scrollToSection('sheltering-resources')}
+                      className="underline text-blue-600 hover:text-blue-800 text-left w-full"
+                    >
+                      Work Assignment
+                    </button>
+                  </td>
+                  <td className="p-1 text-center border">{checklist.workAssignment ? 'Y' : 'N'}</td>
+                </tr>
+                <tr>
+                  <td className="p-1 border">
+                    <button 
+                      onClick={() => scrollToSection('work-sites')}
+                      className="underline text-blue-600 hover:text-blue-800 text-left w-full"
+                    >
+                      Work Sites
+                    </button>
+                  </td>
+                  <td className="p-1 text-center border">{checklist.workSites ? 'Y' : 'N'}</td>
+                </tr>
+                <tr>
+                  <td className="p-1 border">
+                    <button 
+                      onClick={() => scrollToSection('daily-schedule')}
+                      className="underline text-blue-600 hover:text-blue-800 text-left w-full"
+                    >
+                      Daily Schedule
+                    </button>
+                  </td>
+                  <td className="p-1 text-center border">{checklist.dailySchedule ? 'Y' : 'N'}</td>
+                </tr>
+                <tr>
+                  <td className="p-1 border">
+                    <button 
+                      onClick={() => scrollToSection('directors-message')}
+                      className="underline text-blue-600 hover:text-blue-800 text-left w-full"
+                    >
+                      General Message
+                    </button>
+                  </td>
+                  <td className="p-1 text-center border">{checklist.generalMessage ? 'Y' : 'N'}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
-      {/* Prepared/Approved By */}
+      {/* Prepared/Approved By - Compact */}
       <table className="w-full border-2 border-black">
         <tbody>
-          <tr className="bg-gray-200">
-          <td className="border-r-2 border-black p-2 w-1/2">
-            <div className="font-bold">Prepared By:</div>
-            <div>{preparedBy.name}</div>
-            <div className="text-sm">{preparedBy.title}</div>
+          <tr>
+          <td className="border-r-2 border-black p-1 w-1/2">
+            <div className="text-xs font-bold">Prepared By:</div>
+            <div className="text-sm">{preparedBy.name}</div>
+            <div className="text-xs text-gray-600">{preparedBy.title}</div>
           </td>
-          <td className="p-2 w-1/2">
-            <div className="font-bold">Approved By:</div>
-            <div>{approvedBy.name}</div>
-            <div className="text-sm">{approvedBy.title}</div>
+          <td className="p-1 w-1/2">
+            <div className="text-xs font-bold">Approved By:</div>
+            <div className="text-sm">{approvedBy.name}</div>
+            <div className="text-xs text-gray-600">{approvedBy.title}</div>
           </td>
           </tr>
         </tbody>

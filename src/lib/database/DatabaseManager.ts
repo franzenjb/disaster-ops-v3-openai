@@ -71,6 +71,12 @@ export class IndexedDBAdapter implements IndexedDBDatabaseAdapter {
   }
   
   async connect(): Promise<void> {
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined' || !window.indexedDB) {
+      console.warn('IndexedDB not available in this environment');
+      return Promise.resolve();
+    }
+    
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.dbName, this.version);
       
@@ -158,7 +164,7 @@ export class IndexedDBAdapter implements IndexedDBDatabaseAdapter {
   }
   
   async query<T>(storeName: string, params?: any): Promise<QueryResult<T>> {
-    if (!this.db) {
+    if (!this.db || typeof window === 'undefined') {
       return { data: null, error: new Error('Database not connected'), source: 'temporary' };
     }
     

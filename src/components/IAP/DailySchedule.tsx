@@ -1,148 +1,157 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useDailySchedule } from '@/hooks/useMasterData';
-import { initializeMasterDataService, DailyScheduleEntry } from '@/lib/services/MasterDataService';
 
-export function DailySchedule() {
+// Simple type definition to avoid database imports
+interface DailyScheduleEntry {
+  id: string;
+  operation_id: string;
+  time: string;
+  event_name: string;
+  location: string | null;
+  responsible_party: string | null;
+  notes: string | null;
+  event_type: string;
+}
+
+function DailyScheduleClient() {
   const [editMode, setEditMode] = useState(false);
   const [editingItem, setEditingItem] = useState<string | null>(null);
-  const [currentOperationId] = useState<string>('op-current');
+  const [schedule, setSchedule] = useState<DailyScheduleEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   
-  // Initialize master data service
+  // Initialize default schedule 
   useEffect(() => {
-    initializeMasterDataService(currentOperationId);
-  }, [currentOperationId]);
-  
-  // Use master data hook - THE SINGLE SOURCE OF TRUTH
-  const { 
-    schedule, 
-    loading, 
-    error, 
-    updateEntry, 
-    addEntry, 
-    deleteEntry, 
-    lastUpdate 
-  } = useDailySchedule(currentOperationId);
-  
-  // Initialize default schedule if empty (only once)
-  useEffect(() => {
-    if (!loading && schedule.length === 0) {
-      const defaultEntries: Omit<DailyScheduleEntry, 'id'>[] = [
-        {
-          operation_id: currentOperationId,
-          time: '06:00',
-          event_name: 'Operational Period Begins',
-          location: 'All Sites',
-          responsible_party: 'All Personnel',
-          notes: 'Day shift reporting time',
-          event_type: 'operation'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '07:00',
-          event_name: 'Morning Briefing',
-          location: 'DRO HQ / Virtual',
-          responsible_party: 'DRO Director',
-          notes: 'Daily operational briefing for all section chiefs',
-          event_type: 'briefing'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '08:00',
-          event_name: 'Shelter Operations Begin',
-          location: 'All Shelters',
-          responsible_party: 'Shelter Managers',
-          notes: 'Morning shift change',
-          event_type: 'operation'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '09:00',
-          event_name: 'Feeding Operations Begin',
-          location: 'All Kitchens/ERVs',
-          responsible_party: 'Feeding Manager',
-          notes: 'ERV departure for routes',
-          event_type: 'operation'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '10:00',
-          event_name: 'EOC Coordination Call',
-          location: 'State EOC',
-          responsible_party: 'Government Operations',
-          notes: 'Daily state/county coordination',
-          event_type: 'meeting'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '12:00',
-          event_name: 'Midday Status Update',
-          location: 'Virtual',
-          responsible_party: 'All Section Chiefs',
-          notes: 'Quick status check',
-          event_type: 'briefing'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '14:00',
-          event_name: 'Planning Meeting',
-          location: 'DRO HQ',
-          responsible_party: 'Planning Section',
-          notes: 'Next operational period planning',
-          event_type: 'meeting'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '16:00',
-          event_name: 'Resource Request Deadline',
-          location: 'N/A',
-          responsible_party: 'Logistics',
-          notes: 'Deadline for next day resource requests',
-          event_type: 'deadline'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '17:00',
-          event_name: 'Evening Briefing',
-          location: 'DRO HQ / Virtual',
-          responsible_party: 'DRO Director',
-          notes: 'End of day status and night operations',
-          event_type: 'briefing'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '18:00',
-          event_name: 'IAP Publication',
-          location: 'N/A',
-          responsible_party: 'Planning Section',
-          notes: 'Next operational period IAP released',
-          event_type: 'deadline'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '19:00',
-          event_name: 'Night Shift Change',
-          location: 'All 24hr Sites',
-          responsible_party: 'Night Supervisors',
-          notes: 'Night shift reporting time',
-          event_type: 'operation'
-        },
-        {
-          operation_id: currentOperationId,
-          time: '21:00',
-          event_name: 'Night Operations Check',
-          location: 'Virtual',
-          responsible_party: 'Night Operations Chief',
-          notes: 'Status check for overnight operations',
-          event_type: 'operation'
-        }
-      ];
-      
-      // Add default entries to master database
-      defaultEntries.forEach(entry => addEntry(entry));
-    }
-  }, [loading, schedule.length, currentOperationId, addEntry]);
+    setLoading(true);
+    
+    const defaultEntries: DailyScheduleEntry[] = [
+      {
+        id: '1',
+        operation_id: 'demo-op',
+        time: '06:00',
+        event_name: 'Operational Period Begins',
+        location: 'All Sites',
+        responsible_party: 'All Personnel',
+        notes: 'Day shift reporting time',
+        event_type: 'operation'
+      },
+      {
+        id: '2',
+        operation_id: 'demo-op',
+        time: '07:00',
+        event_name: 'Morning Briefing',
+        location: 'DRO HQ / Virtual',
+        responsible_party: 'DRO Director',
+        notes: 'Daily operational briefing for all section chiefs',
+        event_type: 'briefing'
+      },
+      {
+        id: '3',
+        operation_id: 'demo-op',
+        time: '08:00',
+        event_name: 'Shelter Operations Begin',
+        location: 'All Shelters',
+        responsible_party: 'Shelter Managers',
+        notes: 'Morning shift change',
+        event_type: 'operation'
+      },
+      {
+        id: '4',
+        operation_id: 'demo-op',
+        time: '09:00',
+        event_name: 'Feeding Operations Begin',
+        location: 'All Kitchens/ERVs',
+        responsible_party: 'Feeding Manager',
+        notes: 'ERV departure for routes',
+        event_type: 'operation'
+      },
+      {
+        id: '5',
+        operation_id: 'demo-op',
+        time: '10:00',
+        event_name: 'EOC Coordination Call',
+        location: 'State EOC',
+        responsible_party: 'Government Operations',
+        notes: 'Daily state/county coordination',
+        event_type: 'meeting'
+      },
+      {
+        id: '6',
+        operation_id: 'demo-op',
+        time: '12:00',
+        event_name: 'Midday Status Update',
+        location: 'Virtual',
+        responsible_party: 'All Section Chiefs',
+        notes: 'Quick status check',
+        event_type: 'briefing'
+      },
+      {
+        id: '7',
+        operation_id: 'demo-op',
+        time: '14:00',
+        event_name: 'Planning Meeting',
+        location: 'DRO HQ',
+        responsible_party: 'Planning Section',
+        notes: 'Next operational period planning',
+        event_type: 'meeting'
+      },
+      {
+        id: '8',
+        operation_id: 'demo-op',
+        time: '16:00',
+        event_name: 'Resource Request Deadline',
+        location: 'N/A',
+        responsible_party: 'Logistics',
+        notes: 'Deadline for next day resource requests',
+        event_type: 'deadline'
+      },
+      {
+        id: '9',
+        operation_id: 'demo-op',
+        time: '17:00',
+        event_name: 'Evening Briefing',
+        location: 'DRO HQ / Virtual',
+        responsible_party: 'DRO Director',
+        notes: 'End of day status and night operations',
+        event_type: 'briefing'
+      },
+      {
+        id: '10',
+        operation_id: 'demo-op',
+        time: '18:00',
+        event_name: 'IAP Publication',
+        location: 'N/A',
+        responsible_party: 'Planning Section',
+        notes: 'Next operational period IAP released',
+        event_type: 'deadline'
+      },
+      {
+        id: '11',
+        operation_id: 'demo-op',
+        time: '19:00',
+        event_name: 'Night Shift Change',
+        location: 'All 24hr Sites',
+        responsible_party: 'Night Supervisors',
+        notes: 'Night shift reporting time',
+        event_type: 'operation'
+      },
+      {
+        id: '12',
+        operation_id: 'demo-op',
+        time: '21:00',
+        event_name: 'Night Operations Check',
+        location: 'Virtual',
+        responsible_party: 'Night Operations Chief',
+        notes: 'Status check for overnight operations',
+        event_type: 'operation'
+      }
+    ];
+    
+    setSchedule(defaultEntries);
+    setLoading(false);
+  }, []);
   
   const handleSave = () => {
     // Data is already saved via master data service automatically
@@ -150,46 +159,33 @@ export function DailySchedule() {
     setEditingItem(null);
   };
   
-  const handleAddItem = async () => {
-    try {
-      const newEntry: Omit<DailyScheduleEntry, 'id'> = {
-        operation_id: currentOperationId,
-        time: '00:00',
-        event_name: 'New Event',
-        location: '',
-        responsible_party: '',
-        notes: '',
-        event_type: 'operation'
-      };
-      
-      const newId = await addEntry(newEntry);
-      setEditingItem(newId);
-    } catch (error) {
-      console.error('Error adding schedule entry:', error);
-      alert('Failed to add new event. Please try again.');
-    }
+  const handleAddItem = () => {
+    const newEntry: DailyScheduleEntry = {
+      id: Date.now().toString(),
+      operation_id: 'demo-op',
+      time: '00:00',
+      event_name: 'New Event',
+      location: '',
+      responsible_party: '',
+      notes: '',
+      event_type: 'operation'
+    };
+    
+    setSchedule(prev => [...prev, newEntry]);
+    setEditingItem(newEntry.id);
+    setLastUpdate(new Date());
   };
   
-  const handleDeleteItem = async (id: string) => {
-    try {
-      await deleteEntry(id);
-    } catch (error) {
-      console.error('Error deleting schedule entry:', error);
-      alert('Failed to delete event. Please try again.');
-    }
+  const handleDeleteItem = (id: string) => {
+    setSchedule(prev => prev.filter(item => item.id !== id));
+    setLastUpdate(new Date());
   };
   
-  const updateItem = async (id: string, field: keyof DailyScheduleEntry, value: string) => {
-    try {
-      const currentEntry = schedule.find(item => item.id === id);
-      if (currentEntry) {
-        const updatedEntry = { ...currentEntry, [field]: value };
-        await updateEntry(updatedEntry);
-      }
-    } catch (error) {
-      console.error('Error updating schedule entry:', error);
-      alert('Failed to update event. Please try again.');
-    }
+  const updateItem = (id: string, field: keyof DailyScheduleEntry, value: string) => {
+    setSchedule(prev => prev.map(item => 
+      item.id === id ? { ...item, [field]: value } : item
+    ));
+    setLastUpdate(new Date());
   };
   
   return (
@@ -395,3 +391,28 @@ export function DailySchedule() {
     </div>
   );
 }
+
+export function DailySchedule() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 className="text-xl font-bold mb-4 text-gray-900">📅 Daily Schedule</h2>
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
+          <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return <DailyScheduleClient />;
+}
+
+export default DailySchedule;

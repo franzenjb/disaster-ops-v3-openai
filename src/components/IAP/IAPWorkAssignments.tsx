@@ -8,7 +8,7 @@ interface ResourceAssignment {
   leaderName: string;
   leaderContact: string;
   nightLeaderName?: string;
-  nightLeaderContact?: string;
+  nightLeaderContact: string;
   totalPersons: string;
   reportingLocation: string;
   reportingTime: string;
@@ -385,88 +385,117 @@ export function IAPWorkAssignmentsFeedingERV() {
   );
 }
 
+// FIXED: Work Assignments - Feeding with proper IAP format matching sheltering resources
 export function IAPWorkAssignmentsFeeding() {
-  const [facilities, setFacilities] = useState<FacilityData[]>([]);
+  const [resources, setResources] = useState<ResourceAssignment[]>([]);
   
   useEffect(() => {
-    // Load feeding facilities from database
-    const allFacilities = simpleStore.getFacilities();
-    const feedingSites = allFacilities
+    // Load feeding facilities from database  
+    const facilities = simpleStore.getFacilities();
+    const feedingSites = facilities
       .filter(f => f.type === 'Feeding' || f.type === 'Kitchen' || f.type === 'ERV')
       .map(f => {
         const workAssignment = simpleStore.getWorkAssignment(f.id);
         return {
-          id: f.id,
-          name: f.name,
-          type: f.type,
-          county: f.county || 'Unknown',
-          address: f.address,
-          mealsPerDay: workAssignment?.mealsPerDay || 500,
-          staffRequired: workAssignment?.staffRequired || 4,
-          staffAssigned: workAssignment?.staffAssigned || 0,
+          resourceId: f.name,
+          leaderName: 'TBD', // This would come from personnel assignments
+          leaderContact: 'TBD',
+          nightLeaderName: 'TBD', 
+          nightLeaderContact: 'TBD',
+          totalPersons: 'FF/SA-ERV – 2', // Standard feeding personnel
+          reportingLocation: `${f.address}\n${f.city || ''}, ${f.state || 'FL'}\n${f.county || ''} County`,
+          reportingTime: 'Day – 09:00\n\nNight – 19:00',
+          workAssignment: 'Operate feeding site for disaster clients with focus on meal preparation and distribution'
         };
       });
     
-    setFacilities(feedingSites);
-  }, []);
-
-  // If no facilities from database, show example data
-  const displayFacilities = facilities.length > 0 ? facilities : [
-    {
-      id: '1',
-      name: 'ERV Unit 247',
-      type: 'Mobile',
-      county: 'Hillsborough',
-      address: '',
-      mealsPerDay: 500,
-      staffRequired: 4,
-      staffAssigned: 3
-    },
-    {
-      id: '2',
-      name: 'Community Center Kitchen',
-      type: 'Fixed',
-      county: 'Pinellas',
-      address: '',
-      mealsPerDay: 750,
-      staffRequired: 6,
-      staffAssigned: 6
+    // If no facilities from database, show example data matching the image
+    if (feedingSites.length === 0) {
+      setResources([
+        {
+          resourceId: 'ERV Unit 247',
+          leaderName: 'TBD',
+          leaderContact: 'TBD',
+          nightLeaderName: 'TBD',
+          nightLeaderContact: 'TBD', 
+          totalPersons: 'FF/SA-ERV – 2',
+          reportingLocation: 'Mobile Route\nHillsborough County',
+          reportingTime: 'Day – 09:00\n\nNight – 19:00',
+          workAssignment: 'Operate mobile feeding route serving 500 meals per day to disaster clients'
+        },
+        {
+          resourceId: 'Community Center Kitchen',
+          leaderName: 'TBD',
+          leaderContact: 'TBD',
+          nightLeaderName: 'TBD',
+          nightLeaderContact: 'TBD',
+          totalPersons: 'FF/SV – 1\nFF/SA – 5', 
+          reportingLocation: 'Fixed Site Kitchen\nPinellas County',
+          reportingTime: 'Day – 09:00\n\nNight – 19:00',
+          workAssignment: 'Operate fixed feeding kitchen serving 750 meals per day to disaster clients'
+        }
+      ]);
+    } else {
+      setResources(feedingSites);
     }
-  ];
+  }, []);
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Work Assignments - Feeding</h2>
+      {/* Title matching exact IAP format */}
+      <div className="border-2 border-black bg-gray-200 p-2 font-bold">
+        DRO – Feeding Resources
+      </div>
       
-      <table className="w-full border-collapse">
+      {/* Table matching exact IAP structure like sheltering */}
+      <table className="w-full border-collapse border-2 border-black">
         <thead>
-          <tr className="bg-red-600 text-white">
-            <th className="border border-black p-2 text-left">Site/Unit</th>
-            <th className="border border-black p-2 text-center">Type</th>
-            <th className="border border-black p-2 text-center">County</th>
-            <th className="border border-black p-2 text-center">Meals/Day</th>
-            <th className="border border-black p-2 text-center">Staff Req</th>
-            <th className="border border-black p-2 text-center">Staff Have</th>
-            <th className="border border-black p-2 text-center">Gap</th>
+          <tr>
+            <th className="border-2 border-black p-2 text-left" rowSpan={2}>Resource ID</th>
+            <th className="border-2 border-black p-2 text-left" rowSpan={2}>Leader Name & Contact<br />Information</th>
+            <th className="border-2 border-black p-2 text-center" rowSpan={2}>Total # of<br />Persons</th>
+            <th className="border-2 border-black p-2 text-center" colSpan={2}>Reporting</th>
+          </tr>
+          <tr>
+            <th className="border-2 border-black p-2 text-center">Location</th>
+            <th className="border-2 border-black p-2 text-center">Time</th>
           </tr>
         </thead>
         <tbody>
-          {displayFacilities.map((facility, idx) => {
-            const gap = (facility.staffRequired || 0) - (facility.staffAssigned || 0);
-            return (
-              <tr key={facility.id} className={idx % 2 === 0 ? '' : 'bg-gray-50'}>
-                <td className="border border-black p-2">{facility.name}</td>
-                <td className="border border-black p-2 text-center">{facility.type}</td>
-                <td className="border border-black p-2 text-center">{facility.county}</td>
-                <td className="border border-black p-2 text-center">{facility.mealsPerDay || 0}</td>
-                <td className="border border-black p-2 text-center">{facility.staffRequired || 0}</td>
-                <td className="border border-black p-2 text-center">{facility.staffAssigned || 0}</td>
-                <td className={`border border-black p-2 text-center font-bold ${gap > 0 ? 'text-red-600' : ''}`}>
-                  {gap}
+          {resources.map((resource, idx) => (
+            <React.Fragment key={idx}>
+              <tr>
+                <td className="border-2 border-black p-2 align-top font-bold" rowSpan={2}>
+                  {resource.resourceId}
+                </td>
+                <td className="border-2 border-black p-2 whitespace-pre-wrap">
+                  • Day – {resource.leaderName}
+                  <br />
+                  {resource.leaderContact}
+                  <br />
+                  <br />
+                  • Night – {resource.nightLeaderName}
+                  <br />
+                  {resource.nightLeaderContact}
+                </td>
+                <td className="border-2 border-black p-2 text-center whitespace-pre-wrap">
+                  {resource.totalPersons}
+                </td>
+                <td className="border-2 border-black p-2 whitespace-pre-wrap">
+                  {resource.reportingLocation}
+                </td>
+                <td className="border-2 border-black p-2 text-center whitespace-pre-wrap">
+                  {resource.reportingTime}
                 </td>
               </tr>
-            );
-          })}
+              <tr>
+                <td colSpan={4} className="border-2 border-black p-2 bg-gray-100">
+                  <div className="font-bold">Work Assignment</div>
+                  <div>{resource.workAssignment}</div>
+                </td>
+              </tr>
+            </React.Fragment>
+          ))}
         </tbody>
       </table>
       

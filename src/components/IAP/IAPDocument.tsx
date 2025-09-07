@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { V27_IAP_DATA } from '@/data/v27-iap-data';
 import { IAPCoverPage } from './IAPCoverPage';
 import { DirectorsMessage } from './DirectorsMessage';
@@ -34,6 +34,25 @@ interface IAPSection {
 
 export function IAPDocument() {
   const [expandedSection, setExpandedSection] = useState<string>('cover');
+
+  // Listen for navigation events from cover page links
+  useEffect(() => {
+    const handleNavigateToSection = (event: CustomEvent) => {
+      const sectionId = event.detail;
+      setExpandedSection(sectionId);
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    };
+
+    window.addEventListener('navigateToSection', handleNavigateToSection as EventListener);
+    return () => {
+      window.removeEventListener('navigateToSection', handleNavigateToSection as EventListener);
+    };
+  }, []);
   
   // Export to PDF functionality
   const handleExportPDF = () => {
@@ -262,6 +281,8 @@ export function IAPDocument() {
               {/* Section Header */}
               <button
                 onClick={() => toggleSection(section.id)}
+                data-section={section.id}
+                id={section.id}
                 className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors no-print"
               >
                 <div className="flex items-center space-x-4">
@@ -347,7 +368,9 @@ export function IAPDocument() {
             </button>
           </div>
           <div className="text-sm text-gray-600">
-            Last Updated: {new Date().toLocaleString()}
+            <ClientOnly fallback="Last Updated: Loading...">
+              Last Updated: {new Date().toLocaleString()}
+            </ClientOnly>
           </div>
         </div>
       </div>

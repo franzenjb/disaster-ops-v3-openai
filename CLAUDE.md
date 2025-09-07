@@ -2,6 +2,25 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 🚨 CRITICAL RULES - NEVER VIOLATE THESE
+
+### 🔍 ALWAYS VERIFY WITH PLAYWRIGHT BEFORE CLAIMING SUCCESS
+- **NEVER** tell the user something works without checking it first
+- **ALWAYS** use Playwright browser tools to verify the actual application state
+- **NEVER** make assumptions based only on code analysis
+- **ALWAYS** test the live application at http://localhost:3000 before reporting results
+- If you claim something is fixed or working, you MUST have verified it with Playwright
+- The user's screenshots and feedback are authoritative - trust their observations over code analysis
+
+### ❌ NEVER REPLACE OR REMOVE WORKING COMPONENTS WITHOUT EXPLICIT APPROVAL
+- **NEVER** replace existing components that are working and functional
+- **NEVER** switch from one component to another without explicit user request
+- **NEVER** assume a "better" or "cleaner" solution should replace existing work
+- **ALWAYS** ask permission before making any changes to core functionality
+- **ALWAYS** preserve existing functionality when making improvements
+- The user has spent significant time perfecting components - respect that work
+- If you need to modify something, discuss it first and get explicit approval
+
 ## Common Development Commands
 
 ```bash
@@ -238,12 +257,16 @@ Main types in `/src/types/index.ts`:
 
 ## Critical Requirements
 
-### Single Source of Truth
-- Tables Hub is THE authoritative data source
-- All components read from and write to Tables Hub
-- Bidirectional sync ensures data consistency
-- MasterDataService handles all data operations
-- Real-time updates across all views (<100ms)
+### 🚨 CRITICAL: SINGLE SOURCE OF TRUTH - NON-NEGOTIABLE
+- **THIS IS THE MOST IMPORTANT REQUIREMENT OF THE ENTIRE APPLICATION**
+- Tables Hub is THE ONLY authoritative data source
+- ALL components MUST read from and write to Tables Hub
+- 100% bidirectional sync is MANDATORY - no exceptions
+- If Facility Manager creates a facility, it MUST appear in Tables Hub immediately
+- If Tables Hub edits data, it MUST appear in IAP displays immediately
+- MasterDataService handles ALL data operations - no direct database access elsewhere
+- Real-time updates across ALL views (<100ms)
+- **FAILURE TO MAINTAIN SYNC IS A CRITICAL BUG THAT BREAKS THE ENTIRE APPLICATION**
 
 ### Offline-First Design
 - Full functionality without internet connection

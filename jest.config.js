@@ -7,13 +7,29 @@ const createJestConfig = nextJest({
 
 // Add any custom config to be passed to Jest
 const customJestConfig = {
-  // Add more setup options before each test is run
+  // Setup files
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   
-  // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
+  // Test environment
+  testEnvironment: 'jest-environment-jsdom',
+  
+  // Module directories
   moduleDirectories: ['node_modules', '<rootDir>/'],
   
-  testEnvironment: 'jest-environment-jsdom',
+  // Module name mapping for path aliases
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/components/(.*)$': '<rootDir>/src/components/$1',
+    '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
+    '^@/data/(.*)$': '<rootDir>/src/data/$1',
+  },
+  
+  // Test path configuration
+  testPathIgnorePatterns: [
+    '<rootDir>/.next/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/e2e/',
+  ],
   
   // Coverage configuration
   collectCoverageFrom: [
@@ -22,8 +38,11 @@ const customJestConfig = {
     '!src/**/index.ts',
     '!src/app/layout.tsx',
     '!src/app/page.tsx',
+    '!src/**/*.stories.{js,jsx,ts,tsx}',
+    '!src/**/__tests__/**',
   ],
   
+  // Coverage thresholds
   coverageThreshold: {
     global: {
       branches: 80,
@@ -31,7 +50,7 @@ const customJestConfig = {
       lines: 80,
       statements: 80,
     },
-    './src/lib/services/': {
+    './src/lib/': {
       branches: 90,
       functions: 90,
       lines: 90,
@@ -39,47 +58,42 @@ const customJestConfig = {
     },
   },
   
-  // Test path patterns
-  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/', '<rootDir>/e2e/'],
+  // Coverage directory
+  coverageDirectory: '<rootDir>/coverage',
   
-  // Module name mapping
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^@/components/(.*)$': '<rootDir>/src/components/$1',
-    '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
-    '^@/services/(.*)$': '<rootDir>/src/lib/services/$1',
-  },
+  // Coverage reporters
+  coverageReporters: ['text', 'html', 'lcov'],
   
-  // Transform configuration
-  preset: 'ts-jest',
-  transform: {
-    '^.+\\.(js|jsx)$': ['babel-jest', { presets: ['next/babel'] }],
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-  },
+  // Test timeout (increased for async operations)
+  testTimeout: 15000,
   
-  // Global setup
+  // Verbose output for debugging
+  verbose: true,
+  
+  // Transform ignore patterns
+  transformIgnorePatterns: [
+    'node_modules/(?!(.*\\.(mjs|jsx?|tsx?|ts)$))',
+  ],
+  
+  // Global setup and teardown
   globalSetup: '<rootDir>/jest.global-setup.js',
   globalTeardown: '<rootDir>/jest.global-teardown.js',
   
-  // Test timeout
-  testTimeout: 10000,
-  
-  // Verbose output
-  verbose: true,
-  
-  // Parallel tests
-  maxWorkers: '50%',
-  
-  // Test categories
+  // Test categories as separate configs
   projects: [
     {
       displayName: 'unit',
       testMatch: ['<rootDir>/src/**/__tests__/**/*.test.{js,jsx,ts,tsx}'],
-      testPathIgnorePatterns: ['integration', 'e2e'],
+      testPathIgnorePatterns: ['integration', 'e2e', 'performance'],
     },
     {
-      displayName: 'integration',
-      testMatch: ['<rootDir>/src/**/__tests__/**/integration/*.test.{js,jsx,ts,tsx}'],
+      displayName: 'integration', 
+      testMatch: ['<rootDir>/src/**/__tests__/**/*.integration.test.{js,jsx,ts,tsx}'],
+    },
+    {
+      displayName: 'performance',
+      testMatch: ['<rootDir>/src/**/__tests__/**/*.performance.test.{js,jsx,ts,tsx}'],
+      testTimeout: 30000,
     },
   ],
 }

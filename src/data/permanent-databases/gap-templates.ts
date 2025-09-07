@@ -725,3 +725,42 @@ export const PRIORITY_LEVELS = {
     urgency_hours: 72
   }
 } as const;
+
+/**
+ * Main export - Gap Templates Database
+ */
+export const GAP_TEMPLATES: GapTemplate[] = [
+  // Placeholder for now - Phase 4 will populate with full templates
+  {
+    id: 'gap-personnel-shelter-manager',
+    gap_type: 'personnel',
+    category: 'Shelter Operations',
+    title: 'Shelter Manager',
+    description: 'Certified shelter manager for facility operations',
+    typical_quantity_range: { min: 1, max: 2, unit: 'person' },
+    disaster_types: ['hurricane', 'flood', 'fire'],
+    priority_level: 'critical',
+    substitutable: false,
+    skills_required: ['shelter_management', 'crowd_control'],
+    typical_duration_hours: 12,
+    created_at: new Date('2025-01-01'),
+    updated_at: new Date('2025-01-01')
+  },
+  {
+    id: 'gap-supply-cots',
+    gap_type: 'supply',
+    category: 'Sleeping',
+    title: 'Emergency Cots',
+    description: 'Folding cots for shelter sleeping arrangements',
+    typical_quantity_range: { min: 50, max: 200, unit: 'cots' },
+    disaster_types: ['hurricane', 'flood', 'fire', 'tornado'],
+    priority_level: 'high',
+    substitutable: true,
+    skills_required: [],
+    typical_duration_hours: 168, // 1 week
+    created_at: new Date('2025-01-01'),
+    updated_at: new Date('2025-01-01')
+  }
+];
+
+console.log(`✅ GAP_TEMPLATES database loaded: ${GAP_TEMPLATES.length} templates`);

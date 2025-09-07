@@ -10,9 +10,9 @@
 import React, { useState } from 'react';
 import { IAPDocument } from './IAP/IAPDocument';
 import { EnhancedFacilityManager } from './FacilityManagement/EnhancedFacilityManager';
-import { TablesHub } from './TablesHub';
-import { FacilityMapSimple } from './FacilityMapSimple';
-import { IAPViewer } from './IAPViewer';
+import { MinimalTablesHub } from './MinimalTablesHub';
+import { FacilityMapGoogle } from './FacilityMapGoogle';
+import { IAPViewerDynamic } from './IAPViewerDynamic';
 import { User, Operation } from '../types';
 import { V27_IAP_DATA } from '../data/v27-iap-data';
 
@@ -126,10 +126,10 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
       {/* Content Area */}
       <div className={currentView === 'tables-hub' || currentView === 'facility-map' || currentView === 'iap-viewer' ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'}>
         {currentView === 'iap' && <IAPDocument />}
-        {currentView === 'iap-viewer' && <IAPViewer />}
+        {currentView === 'iap-viewer' && <IAPViewerDynamic />}
         {currentView === 'facility-manager' && <EnhancedFacilityManager />}
-        {currentView === 'tables-hub' && <TablesHub />}
-        {currentView === 'facility-map' && <FacilityMapSimple />}
+        {currentView === 'tables-hub' && <MinimalTablesHub />}
+        {currentView === 'facility-map' && <FacilityMapGoogle />}
       </div>
     </div>
   );

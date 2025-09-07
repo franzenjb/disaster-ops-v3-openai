@@ -1,14 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AuthProvider } from '@/lib/auth/AuthProvider';
-import { SignInForm } from '@/components/auth/SignInForm';
 import { OperationDashboard } from '@/components/OperationDashboard';
 import type { Operation } from '@/types';
 
 export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Skip auth for now
+  const [isLoading, setIsLoading] = useState(false); // Skip loading screen
 
   // Create mock operation for demo
   const mockOperation: Operation = {
@@ -63,50 +61,40 @@ export default function Home() {
     );
   }
 
-  if (!isAuthenticated) {
-    return (
-      <AuthProvider>
-        <SignInForm />
-      </AuthProvider>
-    );
-  }
-
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-gray-50">
-        {/* Phase 3 Demo Banner */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="text-2xl">🚀</div>
-              <div>
-                <h1 className="font-bold text-lg">Phase 3 Complete: Advanced Features Demo</h1>
-                <p className="text-sm opacity-90">
-                  Real-time Collaboration • Role-based Access • Bulk Operations • Mobile Optimization
-                </p>
-              </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Phase 3 Demo Banner */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="text-2xl">🚀</div>
+            <div>
+              <h1 className="font-bold text-lg">Phase 3 Complete: Advanced Features Demo</h1>
+              <p className="text-sm opacity-90">
+                Real-time Collaboration • Role-based Access • Bulk Operations • Mobile Optimization
+              </p>
             </div>
-            
-            <div className="hidden md:flex items-center space-x-4 text-sm">
-              <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
-                ✅ Collaboration Engine
-              </div>
-              <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
-                ✅ RBAC Security
-              </div>
-              <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
-                ✅ Advanced Features
-              </div>
-              <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
-                ✅ Mobile Ready
-              </div>
+          </div>
+          
+          <div className="hidden md:flex items-center space-x-4 text-sm">
+            <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+              ✅ Collaboration Engine
+            </div>
+            <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+              ✅ RBAC Security
+            </div>
+            <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+              ✅ Advanced Features
+            </div>
+            <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+              ✅ Mobile Ready
             </div>
           </div>
         </div>
-
-        {/* Main Application */}
-        <OperationDashboard operation={mockOperation} />
       </div>
-    </AuthProvider>
+
+      {/* Main Application */}
+      <OperationDashboard operation={mockOperation} />
+    </div>
   );
 }

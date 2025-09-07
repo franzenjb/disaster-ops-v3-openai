@@ -695,7 +695,11 @@ export class MasterDataService {
 /**
  * Get singleton instance - only creates on client side
  */
-export function getMasterDataService(): MasterDataService {
+export function getMasterDataService(): MasterDataService | null {
+  // Prevent SSR issues - only create instance on client side
+  if (typeof window === 'undefined') {
+    return null;
+  }
   return MasterDataService.getInstance();
 }
 

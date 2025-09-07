@@ -29,7 +29,16 @@
     "coverage:open": "open coverage/lcov-report/index.html",
     "coverage:clean": "rm -rf coverage",
     "pretest": "npm run type-check && npm run lint",
-    "posttest": "npm run coverage:clean"
+    "posttest": "npm run coverage:clean",
+    "test:agents": "npx ts-node .claude/agents/master-test-agent.ts",
+    "test:agent:maps": "npx ts-node .claude/agents/google-maps-test-agent.ts",
+    "test:agent:iap": "npx ts-node .claude/agents/iap-sections-test-agent.ts",
+    "test:agent:sync": "npx ts-node .claude/agents/data-sync-test-agent.ts",
+    "test:agent:ui": "npx ts-node .claude/agents/ui-validation-agent.ts",
+    "test:agent:api": "npx ts-node .claude/agents/api-integration-test-agent.ts",
+    "agents:list": "npx ts-node .claude/agents/master-test-agent.ts --list",
+    "agents:sequential": "npx ts-node .claude/agents/master-test-agent.ts --sequential",
+    "agents:critical": "npm run test:agents -- --fail-fast"
   },
   "keywords": [],
   "author": "",

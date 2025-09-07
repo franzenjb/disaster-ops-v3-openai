@@ -7,14 +7,22 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'demo-key';
 
+// Handle placeholder URLs from .env.local
+const isPlaceholderUrl = supabaseUrl === 'YOUR_SUPABASE_URL_HERE' || supabaseUrl?.includes('YOUR_SUPABASE_URL_HERE');
+const isPlaceholderKey = supabaseAnonKey === 'YOUR_SUPABASE_ANON_KEY_HERE' || supabaseAnonKey?.includes('YOUR_SUPABASE_ANON_KEY_HERE');
+
 // Check if Supabase is properly configured
-const isSupabaseConfigured = supabaseUrl !== 'YOUR_SUPABASE_URL_HERE' && 
-                            supabaseAnonKey !== 'YOUR_SUPABASE_ANON_KEY_HERE' &&
+const isSupabaseConfigured = !isPlaceholderUrl && 
+                            !isPlaceholderKey &&
                             supabaseUrl !== 'http://localhost:54321' &&
                             supabaseAnonKey !== 'demo-key';
 
+// Use fallback URLs for development when placeholders are detected
+const finalUrl = isPlaceholderUrl ? 'http://localhost:54321' : supabaseUrl;
+const finalKey = isPlaceholderKey ? 'demo-key' : supabaseAnonKey;
+
 // Create Supabase client with fallback
-export const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient(finalUrl, finalKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -25,7 +33,7 @@ export const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabas
       eventsPerSecond: 10 // Rate limiting for real-time updates
     }
   }
-}) : null; // Fallback to null when not configured
+}); // Always create client with fallback values
 
 // Mock Supabase client for development without database
 export const mockSupabaseClient = {

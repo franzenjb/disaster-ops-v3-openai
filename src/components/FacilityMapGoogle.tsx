@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { V27_IAP_DATA } from '@/data/v27-iap-data';
+import { loadGoogleMapsAPI } from '@/lib/utils/googleMapsLoader';
 
 interface MapFacility {
   id: string;
@@ -28,13 +29,6 @@ const FACILITY_COORDINATES: { [key: string]: [number, number] } = {
   'County EOC Liaison': [27.9506, -82.4572], // Tampa
 };
 
-declare global {
-  interface Window {
-    google: any;
-    initMap: () => void;
-  }
-}
-
 export function FacilityMapGoogle() {
   const [facilities, setFacilities] = useState<MapFacility[]>([]);
   const [selectedFacility, setSelectedFacility] = useState<MapFacility | null>(null);
@@ -42,33 +36,24 @@ export function FacilityMapGoogle() {
   const [map, setMap] = useState<any>(null);
   const [markers, setMarkers] = useState<any[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Load Google Maps
+  // Load Google Maps using centralized loader
   useEffect(() => {
-    const loadGoogleMaps = () => {
-      if (window.google) {
+    loadGoogleMapsAPI()
+      .then(() => {
         setIsLoaded(true);
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`;
-      script.async = true;
-      script.defer = true;
-
-      window.initMap = () => {
-        setIsLoaded(true);
-      };
-
-      document.head.appendChild(script);
-    };
-
-    loadGoogleMaps();
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Failed to load Google Maps:', error);
+        setLoading(false);
+      });
   }, []);
 
   // Initialize map
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!isLoaded || !window.google) return;
 
     const mapElement = document.getElementById('google-map');
     if (!mapElement) return;
@@ -107,20 +92,25 @@ export function FacilityMapGoogle() {
       : facilities.filter(f => f.discipline === filterDiscipline);
 
     filteredFacs.forEach(facility => {
-      const marker = new window.google.maps.Marker({
-        position: { lat: facility.lat, lng: facility.lng },
-        map: map,
-        title: facility.name,
-        icon: {
-          path: window.google.maps.SymbolPath.CIRCLE,
-          fillColor: facility.color === 'red' ? '#DC2626' : 
-                     facility.color === 'orange' ? '#EA580C' : '#2563EB',
-          fillOpacity: 1,
-          strokeColor: '#FFFFFF',
-          strokeWeight: 2,
-          scale: 10
-        }
-      });
+      // Use the new AdvancedMarkerElement if available, fallback to Marker
+      let marker;
+      
+      // Always use regular Marker for now until Map ID is configured
+      marker = new window.google.maps.Marker({
+          position: { lat: facility.lat, lng: facility.lng },
+          map: map,
+          title: facility.name,
+          icon: {
+            path: window.google.maps.SymbolPath.CIRCLE,
+            fillColor: facility.color === 'red' ? '#DC2626' : 
+                       facility.color === 'orange' ? '#EA580C' : '#2563EB',
+            fillOpacity: 1,
+            strokeColor: '#FFFFFF',
+            strokeWeight: 2,
+            scale: 10
+          }
+        });
+      }
 
       const infoWindow = new window.google.maps.InfoWindow({
         content: `
@@ -256,10 +246,12 @@ export function FacilityMapGoogle() {
       map.setZoom(16);
       
       // Find and click the marker
-      const marker = markers.find(m => 
-        m.getPosition().lat() === facility.lat && 
-        m.getPosition().lng() === facility.lng
-      );
+      const marker = markers.find(m => {
+        const position = m.position || m.getPosition();
+        const lat = typeof position?.lat === 'function' ? position.lat() : position?.lat;
+        const lng = typeof position?.lng === 'function' ? position.lng() : position?.lng;
+        return lat === facility.lat && lng === facility.lng;
+      });
       if (marker) {
         window.google.maps.event.trigger(marker, 'click');
       }
@@ -272,7 +264,7 @@ export function FacilityMapGoogle() {
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`, '_blank');
   };
 
-  if (!isLoaded) {
+  if (loading || !isLoaded) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">

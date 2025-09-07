@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps Test</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .error {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+        .success {
+            background-color: #e8f5e8;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Maps API Test</h1>
+    <div id="status" class="status">Loading...</div>
+    <div id="map"></div>
+    
+    <script>
+        let map;
+        let statusDiv = document.getElementById('status');
+        
+        function updateStatus(message, isError = false) {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${isError ? 'error' : 'success'}`;
+        }
+        
+        function initMap() {
+            try {
+                updateStatus('Initializing Google Maps...');
+                
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: 27.9506, lng: -82.4572 }, // Tampa, FL
+                    zoom: 10
+                });
+                
+                // Add a marker
+                new google.maps.Marker({
+                    position: { lat: 27.9506, lng: -82.4572 },
+                    map: map,
+                    title: 'Tampa, FL'
+                });
+                
+                updateStatus('✅ Google Maps loaded successfully!');
+                
+            } catch (error) {
+                updateStatus(`❌ Error initializing map: ${error.message}`, true);
+            }
+        }
+        
+        function handleGoogleMapsError() {
+            updateStatus('❌ Google Maps failed to load - check console for details', true);
+        }
+        
+        window.gm_authFailure = function() {
+            updateStatus('❌ Google Maps authentication failure - invalid API key', true);
+        };
+        
+        // Log any errors
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e);
+        });
+        
+        updateStatus('Loading Google Maps API...');
+    </script>
+    
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9M0GnDouz5-aVc7pGNFsuJuu6ijgl404&callback=initMap&libraries=places&v=weekly"
+        onerror="handleGoogleMapsError()">
+    </script>
+</body>
+</html>

@@ -10,7 +10,7 @@
 import React, { useState } from 'react';
 import { IAPDocument } from './IAP/IAPDocument';
 import { EnhancedFacilityManager } from './FacilityManagement/EnhancedFacilityManager';
-import { MinimalTablesHub } from './MinimalTablesHub';
+import { DatabaseViewer } from './DatabaseViewer';
 import { FacilityMapGoogle } from './FacilityMapGoogle';
 import { IAPViewerDynamic } from './IAPViewerDynamic';
 import { User, Operation } from '../types';
@@ -107,7 +107,7 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              📊 Tables & Data Hub
+              🗄️ Database Inspector
             </button>
             <button
               onClick={() => setCurrentView('facility-map')}
@@ -128,7 +128,7 @@ export function OperationDashboard({ operation, user }: OperationDashboardProps)
         {currentView === 'iap' && <IAPDocument />}
         {currentView === 'iap-viewer' && <IAPViewerDynamic />}
         {currentView === 'facility-manager' && <EnhancedFacilityManager />}
-        {currentView === 'tables-hub' && <MinimalTablesHub />}
+        {currentView === 'tables-hub' && <DatabaseViewer />}
         {currentView === 'facility-map' && <FacilityMapGoogle />}
       </div>
     </div>

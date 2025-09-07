@@ -9,7 +9,7 @@
 
 import { PERSONNEL_UNIVERSE, type PersonnelRecord } from '@/data/permanent-databases/personnel-universe';
 import { ASSETS_LIBRARY, type AssetItem } from '@/data/permanent-databases/assets-library';
-import { GAP_TEMPLATES, type GapTemplate } from '@/data/permanent-databases/gap-templates';
+import { GAP_TEMPLATES_LIBRARY, type GapTemplate } from '@/data/permanent-databases/gap-templates';
 import { MasterDataService } from './MasterDataService';
 
 export class DataLoader {
@@ -119,9 +119,9 @@ export class DataLoader {
    * Load all gaps from GAP_TEMPLATES
    */
   private async loadGapData(): Promise<void> {
-    console.log(`⚠️ Loading ${GAP_TEMPLATES.length} gap templates...`);
+    console.log(`⚠️ Loading ${GAP_TEMPLATES_LIBRARY.length} gap templates...`);
     
-    for (const gap of GAP_TEMPLATES) {
+    for (const gap of GAP_TEMPLATES_LIBRARY) {
       // Convert GapTemplate to MasterDataService format
       const gapData = {
         id: gap.id,
@@ -148,7 +148,7 @@ export class DataLoader {
       }
     }
     
-    console.log(`✅ Loaded ${GAP_TEMPLATES.length} gap templates`);
+    console.log(`✅ Loaded ${GAP_TEMPLATES_LIBRARY.length} gap templates`);
   }
 
   /**
@@ -163,7 +163,7 @@ export class DataLoader {
     const stats = {
       personnel: PERSONNEL_UNIVERSE.length,
       assets: ASSETS_LIBRARY.length,
-      gaps: GAP_TEMPLATES.length,
+      gaps: GAP_TEMPLATES_LIBRARY.length,
       facilities: 0 // Will be loaded from V27_IAP_DATA separately
     };
     
